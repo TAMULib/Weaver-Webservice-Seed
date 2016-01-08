@@ -1,0 +1,17 @@
+/Users/huff/development/java/apps/TAMU-Webservice-Seed/src/main/java/edu/tamu/app/config/AppWebConfigSupport.java
+/Users/huff/development/java/apps/TAMU-Webservice-Seed/src/main/java/edu/tamu/app/model/repo/UserRepoCustom.java
+/Users/huff/development/java/apps/TAMU-Webservice-Seed/src/main/java/edu/tamu/app/aspect/AppControllerAspect.java
+/Users/huff/development/java/apps/TAMU-Webservice-Seed/src/main/java/edu/tamu/app/config/AppWebSocketConfig.java
+/Users/huff/development/java/apps/TAMU-Webservice-Seed/src/main/java/edu/tamu/app/model/AppUser.java
+/Users/huff/development/java/apps/TAMU-Webservice-Seed/src/main/java/edu/tamu/app/config/AppConfig.java
+/Users/huff/development/java/apps/TAMU-Webservice-Seed/src/main/java/edu/tamu/app/config/SpringContext.java
+/Users/huff/development/java/apps/TAMU-Webservice-Seed/src/main/java/edu/tamu/app/controller/interceptor/AppRestInterceptor.java
+/Users/huff/development/java/apps/TAMU-Webservice-Seed/src/main/java/edu/tamu/app/controller/MockAuthServiceController.java
+/Users/huff/development/java/apps/TAMU-Webservice-Seed/src/main/java/edu/tamu/app/model/repo/impl/UserRepoImpl.java
+/Users/huff/development/java/apps/TAMU-Webservice-Seed/src/main/java/edu/tamu/app/config/SecurityConfig.java
+/Users/huff/development/java/apps/TAMU-Webservice-Seed/src/main/java/edu/tamu/app/controller/AdminController.java
+/Users/huff/development/java/apps/TAMU-Webservice-Seed/src/main/java/edu/tamu/app/config/AppWebMvcConfig.java
+/Users/huff/development/java/apps/TAMU-Webservice-Seed/src/main/java/edu/tamu/app/model/repo/UserRepo.java
+/Users/huff/development/java/apps/TAMU-Webservice-Seed/src/main/java/edu/tamu/app/WebServerInit.java
+/Users/huff/development/java/apps/TAMU-Webservice-Seed/src/main/java/edu/tamu/app/controller/UserController.java
+/Users/huff/development/java/apps/TAMU-Webservice-Seed/src/main/java/edu/tamu/app/controller/interceptor/AppStompInterceptor.java
