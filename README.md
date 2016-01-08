@@ -1,2 +1,2 @@
-MyLibrary Web Service
+TAMU-Webservice-Seed
 =============
