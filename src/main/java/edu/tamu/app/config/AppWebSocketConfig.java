@@ -1,5 +1,5 @@
 /* 
- * WebSocketConfig.java 
+ * AppWebSocketConfig.java 
  * 
  * Version: 
  *     $Id$ 
@@ -14,11 +14,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 
-import edu.tamu.app.controller.interceptor.AppStompInterceptor;
 import edu.tamu.framework.config.CoreWebSocketConfig;
+import edu.tamu.app.controller.interceptor.AppStompInterceptor;
 
 /** 
- * Web Socket Configuration.
+ * Application Web Socket Configuration.
  * 
  * @author
  *
@@ -26,6 +26,17 @@ import edu.tamu.framework.config.CoreWebSocketConfig;
 @Configuration
 @EnableWebSocketMessageBroker
 public class AppWebSocketConfig extends CoreWebSocketConfig {
+		
+	/**
+	 * Configure client inbound channel. Sets stomp interceptor. 
+	 * 
+	 * @param       registration   	ChannelRegistration
+	 * 
+	 */
+	@Override
+	public void configureClientInboundChannel(ChannelRegistration registration) {
+		registration.setInterceptors(appStompInterceptor());
+	}
 	
 	/**
 	 * Stomp interceptor bean.
@@ -37,17 +48,5 @@ public class AppWebSocketConfig extends CoreWebSocketConfig {
 	public AppStompInterceptor appStompInterceptor() {
 		return new AppStompInterceptor();
 	}
-	
-	/**
-	 * Configure client inbound channel. Sets stomp interceptor. 
-	 * 
-	 * @param       registration   	ChannelRegistration
-	 * 
-	 */
-	@Override
-	public void configureClientInboundChannel(ChannelRegistration registration) {
-		registration.setInterceptors(appStompInterceptor());
-	}
 
 }
-

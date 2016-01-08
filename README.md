@@ -1,4 +1,2 @@
-TAMU WEBSERVICE SEED
+MyLibrary Web Service
 =============
-
-This is a bare bones app for starting new Spring MVC applications.
