@@ -30,7 +30,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import edu.tamu.framework.model.jwt.JWTtoken;
+import edu.tamu.framework.model.jwt.JWT;
 
 /** 
  * Mock Auth Service.
@@ -92,7 +92,7 @@ public class MockAuthServiceController {
 	 * @param       params    		@RequestParam() Map<String,String>
 	 * @param       headers    		@RequestHeader() Map<String,String>
 	 *
-	 * @return      JWTtoken
+	 * @return      JWT
 	 *
 	 * @exception   InvalidKeyException
 	 * @exception   NoSuchAlgorithmException
@@ -102,7 +102,7 @@ public class MockAuthServiceController {
 	 * 
 	 */
 	@RequestMapping("/refresh")
-	public JWTtoken refresh(@RequestParam() Map<String,String> params, @RequestHeader() Map<String,String> headers) throws InvalidKeyException, NoSuchAlgorithmException, IllegalStateException, UnsupportedEncodingException, JsonProcessingException {
+	public JWT refresh(@RequestParam() Map<String,String> params, @RequestHeader() Map<String,String> headers) throws InvalidKeyException, NoSuchAlgorithmException, IllegalStateException, UnsupportedEncodingException, JsonProcessingException {
 		return makeToken(params.get("mock"), headers);
 	}
 	
@@ -111,7 +111,7 @@ public class MockAuthServiceController {
 	 *
 	 * @param       headers    		Map<String, String>
 	 *
-	 * @return      JWTtoken
+	 * @return      JWT
 	 *
 	 * @exception   InvalidKeyException
 	 * @exception   NoSuchAlgorithmException
@@ -120,11 +120,11 @@ public class MockAuthServiceController {
 	 * @exception   JsonProcessingException
 	 * 
 	 */
-	private JWTtoken makeToken(String mockUser, Map<String, String> headers) throws InvalidKeyException, JsonProcessingException, NoSuchAlgorithmException, IllegalStateException, UnsupportedEncodingException {		
+	private JWT makeToken(String mockUser, Map<String, String> headers) throws InvalidKeyException, JsonProcessingException, NoSuchAlgorithmException, IllegalStateException, UnsupportedEncodingException {		
 		
 		logger.info("Creating token for mock " + mockUser);
 		
-		JWTtoken token = new JWTtoken(secret_key, duration);
+		JWT token = new JWT(secret_key, duration);
 		
 		if(mockUser.equals("assumed")) {
 			for(String k : shibKeys) {
