@@ -14,6 +14,10 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -43,6 +46,9 @@ public class MockAuthServiceController {
 		
 	@Value("${auth.security.jwt.secret-key}")
     private String secret_key;
+	
+	@Value("${auth.security.jwt_expiration}")
+    private Long duration;
 	
 	@Value("${shib.keys}")
 	private String[] shibKeys;
@@ -65,10 +71,13 @@ public class MockAuthServiceController {
 	 * @exception   IllegalStateException
 	 * @exception   UnsupportedEncodingException
 	 * @exception   JsonProcessingException
+	 * @throws BadPaddingException 
+	 * @throws IllegalBlockSizeException 
+	 * @throws NoSuchPaddingException 
 	 * 
 	 */
 	@RequestMapping("/token")
-	public RedirectView token(@RequestParam() Map<String,String> params, @RequestHeader() Map<String,String> headers) throws InvalidKeyException, NoSuchAlgorithmException, IllegalStateException, UnsupportedEncodingException, JsonProcessingException {
+	public RedirectView token(@RequestParam() Map<String,String> params, @RequestHeader() Map<String,String> headers) throws InvalidKeyException, NoSuchAlgorithmException, IllegalStateException, UnsupportedEncodingException, JsonProcessingException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException {
 		String referer = params.get("referer");
 		if(referer == null) System.err.println("No referer in query string!!");
 		
@@ -115,7 +124,7 @@ public class MockAuthServiceController {
 		
 		logger.info("Creating token for mock " + mockUser);
 		
-		JWTtoken token = new JWTtoken(secret_key);
+		JWTtoken token = new JWTtoken(secret_key, duration);
 		
 		if(mockUser.equals("assumed")) {
 			for(String k : shibKeys) {
