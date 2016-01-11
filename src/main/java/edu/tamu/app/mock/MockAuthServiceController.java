@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -67,10 +68,13 @@ public class MockAuthServiceController {
 	 * 
 	 */
 	@RequestMapping("/token")
-	public ModelAndView token(@RequestParam() Map<String,String> params, @RequestHeader() Map<String,String> headers) throws InvalidKeyException, NoSuchAlgorithmException, IllegalStateException, UnsupportedEncodingException, JsonProcessingException {
+	public RedirectView token(@RequestParam() Map<String,String> params, @RequestHeader() Map<String,String> headers) throws InvalidKeyException, NoSuchAlgorithmException, IllegalStateException, UnsupportedEncodingException, JsonProcessingException {
 		String referer = params.get("referer");
 		if(referer == null) System.err.println("No referer in query string!!");
-		return new ModelAndView("redirect:" + referer + "?jwt=" + makeToken(params.get("mock"), headers).getTokenAsString());
+		
+		//RedirectView redirect = new RedirectView();
+		
+		return new RedirectView(referer + "?jwt=" + makeToken(params.get("mock"), headers).getTokenAsString());
 	}
 	
 	/**
