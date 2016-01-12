@@ -14,6 +14,10 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,12 +26,11 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import edu.tamu.framework.model.jwt.JWTtoken;
+import edu.tamu.framework.model.jwt.JWT;
 
 /** 
  * Mock Auth Service.
@@ -43,6 +46,9 @@ public class MockAuthServiceController {
 		
 	@Value("${auth.security.jwt.secret-key}")
     private String secret_key;
+	
+	@Value("${auth.security.jwt-expiration}")
+    private Long expiration;
 	
 	@Value("${shib.keys}")
 	private String[] shibKeys;
@@ -65,10 +71,13 @@ public class MockAuthServiceController {
 	 * @exception   IllegalStateException
 	 * @exception   UnsupportedEncodingException
 	 * @exception   JsonProcessingException
+	 * @throws BadPaddingException 
+	 * @throws IllegalBlockSizeException 
+	 * @throws NoSuchPaddingException 
 	 * 
 	 */
 	@RequestMapping("/token")
-	public RedirectView token(@RequestParam() Map<String,String> params, @RequestHeader() Map<String,String> headers) throws InvalidKeyException, NoSuchAlgorithmException, IllegalStateException, UnsupportedEncodingException, JsonProcessingException {
+	public RedirectView token(@RequestParam() Map<String,String> params, @RequestHeader() Map<String,String> headers) throws InvalidKeyException, NoSuchAlgorithmException, IllegalStateException, UnsupportedEncodingException, JsonProcessingException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException {
 		String referer = params.get("referer");
 		if(referer == null) System.err.println("No referer in query string!!");
 		
@@ -83,7 +92,7 @@ public class MockAuthServiceController {
 	 * @param       params    		@RequestParam() Map<String,String>
 	 * @param       headers    		@RequestHeader() Map<String,String>
 	 *
-	 * @return      JWTtoken
+	 * @return      JWT
 	 *
 	 * @exception   InvalidKeyException
 	 * @exception   NoSuchAlgorithmException
@@ -93,7 +102,7 @@ public class MockAuthServiceController {
 	 * 
 	 */
 	@RequestMapping("/refresh")
-	public JWTtoken refresh(@RequestParam() Map<String,String> params, @RequestHeader() Map<String,String> headers) throws InvalidKeyException, NoSuchAlgorithmException, IllegalStateException, UnsupportedEncodingException, JsonProcessingException {
+	public JWT refresh(@RequestParam() Map<String,String> params, @RequestHeader() Map<String,String> headers) throws InvalidKeyException, NoSuchAlgorithmException, IllegalStateException, UnsupportedEncodingException, JsonProcessingException {
 		return makeToken(params.get("mock"), headers);
 	}
 	
@@ -102,7 +111,7 @@ public class MockAuthServiceController {
 	 *
 	 * @param       headers    		Map<String, String>
 	 *
-	 * @return      JWTtoken
+	 * @return      JWT
 	 *
 	 * @exception   InvalidKeyException
 	 * @exception   NoSuchAlgorithmException
@@ -111,11 +120,11 @@ public class MockAuthServiceController {
 	 * @exception   JsonProcessingException
 	 * 
 	 */
-	private JWTtoken makeToken(String mockUser, Map<String, String> headers) throws InvalidKeyException, JsonProcessingException, NoSuchAlgorithmException, IllegalStateException, UnsupportedEncodingException {		
+	private JWT makeToken(String mockUser, Map<String, String> headers) throws InvalidKeyException, JsonProcessingException, NoSuchAlgorithmException, IllegalStateException, UnsupportedEncodingException {		
 		
 		logger.info("Creating token for mock " + mockUser);
 		
-		JWTtoken token = new JWTtoken(secret_key);
+		JWT token = new JWT(secret_key, expiration);
 		
 		if(mockUser.equals("assumed")) {
 			for(String k : shibKeys) {
