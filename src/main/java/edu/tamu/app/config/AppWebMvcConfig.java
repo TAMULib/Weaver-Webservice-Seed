@@ -1,3 +1,12 @@
+/* 
+ * AppWebMvcConfig.java 
+ * 
+ * Version: 
+ *     $Id$ 
+ * 
+ * Revisions: 
+ *     $Log$ 
+ */
 package edu.tamu.app.config;
 
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -8,13 +17,16 @@ import org.springframework.web.servlet.resource.ResourceUrlEncodingFilter;
 
 import edu.tamu.framework.config.CoreWebMvcConfig;
 
+/**
+ * 
+ */
 @Configuration
 @AutoConfigureAfter(DispatcherServletAutoConfiguration.class)
 public class AppWebMvcConfig extends CoreWebMvcConfig {
 
-    @Bean
-    public ResourceUrlEncodingFilter resourceUrlEncodingFilter() {
-       return new ResourceUrlEncodingFilter();
-    }
+	@Bean
+	public ResourceUrlEncodingFilter resourceUrlEncodingFilter() {
+		return new ResourceUrlEncodingFilter();
+	}
 
 }

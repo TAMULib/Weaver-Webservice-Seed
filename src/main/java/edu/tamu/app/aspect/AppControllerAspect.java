@@ -14,11 +14,9 @@ import org.springframework.stereotype.Component;
 
 import edu.tamu.framework.aspect.CoreControllerAspect;
 
-/** 
+/**
  * Application Controller Aspect
  * 
- * @author
- *
  */
 @Component
 @Aspect

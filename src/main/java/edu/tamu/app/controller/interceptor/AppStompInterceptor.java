@@ -23,8 +23,6 @@ import edu.tamu.framework.model.Credentials;
  * Application Stomp interceptor. Checks command, decodes and verifies token,
  * either returns error message to frontend or continues to controller.
  * 
- * @author
- *
  */
 @Component
 public class AppStompInterceptor extends CoreStompInterceptor {
@@ -38,13 +36,7 @@ public class AppStompInterceptor extends CoreStompInterceptor {
 	private static final Logger logger = Logger.getLogger(AppStompInterceptor.class);
 
 	/**
-	 * @see edu.tamu.framework.interceptor.CoreStompInterceptor#confirmCreateUser(edu.tamu.framework.model.Credentials)
-	 * 
-	 * @param shib
-	 *            Credentials
-	 * 
-	 * @return shib
-	 * 
+	 * {@inheritDoc}
 	 */
 	@Override
 	public Credentials confirmCreateUser(Credentials shib) {
@@ -75,8 +67,7 @@ public class AppStompInterceptor extends CoreStompInterceptor {
 
 			user = userRepo.save(user);
 
-			logger.info("Created new user: " + shib.getFirstName() + " " + shib.getLastName() + " ("
-					+ Long.parseLong(shib.getUin()) + ")");
+			logger.info("Created new user: " + shib.getFirstName() + " " + shib.getLastName() + " (" + Long.parseLong(shib.getUin()) + ")");
 
 		}
 
