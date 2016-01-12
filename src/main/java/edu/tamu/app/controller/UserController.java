@@ -11,9 +11,14 @@ package edu.tamu.app.controller;
 
 import static edu.tamu.framework.enums.ApiResponseType.SUCCESS;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import edu.tamu.app.model.AppUser;
 import edu.tamu.app.model.repo.AppUserRepo;
 import edu.tamu.framework.aspect.annotation.ApiMapping;
 import edu.tamu.framework.aspect.annotation.Auth;
@@ -53,7 +58,9 @@ public class UserController {
 	@ApiMapping("/all")
 	@Auth(role = "ROLE_MANAGER")
 	public ApiResponse allUsers() throws Exception {
-		return new ApiResponse(SUCCESS, userRepo.findAll());
+		Map<String,List<AppUser>> map = new HashMap<String,List<AppUser>>();
+		map.put("list", userRepo.findAll());		
+		return new ApiResponse(SUCCESS, map);
 	}
 	
 }
