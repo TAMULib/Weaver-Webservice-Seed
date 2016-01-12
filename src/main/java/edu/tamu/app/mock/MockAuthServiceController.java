@@ -47,8 +47,8 @@ public class MockAuthServiceController {
 	@Value("${auth.security.jwt.secret-key}")
     private String secret_key;
 	
-	@Value("${auth.security.jwt_expiration}")
-    private Long duration;
+	@Value("${auth.security.jwt-expiration}")
+    private Long expiration;
 	
 	@Value("${shib.keys}")
 	private String[] shibKeys;
@@ -124,7 +124,7 @@ public class MockAuthServiceController {
 		
 		logger.info("Creating token for mock " + mockUser);
 		
-		JWT token = new JWT(secret_key, duration);
+		JWT token = new JWT(secret_key, expiration);
 		
 		if(mockUser.equals("assumed")) {
 			for(String k : shibKeys) {
