@@ -14,21 +14,19 @@ import javax.persistence.Entity;
 
 import edu.tamu.framework.model.AbstractCoreUserImpl;
 
-/** 
+/**
  * Application User entity.
  * 
- * @author
- *
  */
 @Entity
 public class AppUser extends AbstractCoreUserImpl {
-	
-	@Column(name="first_name")
+
+	@Column(name = "first_name")
 	private String firstName;
-	
-	@Column(name="last_name")
+
+	@Column(name = "last_name")
 	private String lastName;
-	
+
 	/**
 	 * Constructor for the application user
 	 * 
@@ -36,11 +34,12 @@ public class AppUser extends AbstractCoreUserImpl {
 	public AppUser() {
 		super();
 	}
-	
+
 	/**
 	 * Constructor for application user with uin passed.
 	 * 
-	 * @param       uin             Long
+	 * @param uin
+	 *            Long
 	 * 
 	 */
 	public AppUser(Long uin) {
@@ -49,7 +48,7 @@ public class AppUser extends AbstractCoreUserImpl {
 
 	/**
 	 * 
-	 * @return      firstName
+	 * @return firstName
 	 * 
 	 */
 	public String getFirstName() {
@@ -57,7 +56,8 @@ public class AppUser extends AbstractCoreUserImpl {
 	}
 
 	/**
-	 * @param      firstName        String
+	 * @param firstName
+	 *            String
 	 * 
 	 */
 	public void setFirstName(String firstName) {
@@ -65,7 +65,7 @@ public class AppUser extends AbstractCoreUserImpl {
 	}
 
 	/**
-	 * @return      lastName
+	 * @return lastName
 	 * 
 	 */
 	public String getLastName() {
@@ -73,7 +73,8 @@ public class AppUser extends AbstractCoreUserImpl {
 	}
 
 	/**
-	 * @param      lastName        String
+	 * @param lastName
+	 *            String
 	 * 
 	 */
 	public void setLastName(String lastName) {

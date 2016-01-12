@@ -12,8 +12,6 @@ package edu.tamu.app.enums;
 /**
  * Different roles to be assumed
  * 
- * @author
- *
  */
 public enum Roles {
 	ROLE_ANONYMOUS, 

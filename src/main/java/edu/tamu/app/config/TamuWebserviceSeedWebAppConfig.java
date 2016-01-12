@@ -18,37 +18,32 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import edu.tamu.app.controller.interceptor.AppRestInterceptor;
 import edu.tamu.framework.config.CoreWebAppConfig;
 
-/** 
+/**
  * Web MVC Configuration for application controller.
  * 
- * @author
- *
  */
 @Configuration
-@ComponentScan(basePackages = {"edu.tamu.app.config", "edu.tamu.app.controller"})
-@ConfigurationProperties(prefix="app.controller")
-public class TamuWebserviceSeedWebAppConfig extends CoreWebAppConfig {	
-	
+@ComponentScan(basePackages = { "edu.tamu.app.config", "edu.tamu.app.controller" })
+@ConfigurationProperties(prefix = "app.controller")
+public class TamuWebserviceSeedWebAppConfig extends CoreWebAppConfig {
+
 	/**
 	 * Rest interceptor bean.
 	 *
-	 * @return      RestInterceptor
+	 * @return RestInterceptor
 	 *
 	 */
 	@Bean
 	public AppRestInterceptor restInterceptor() {
-	    return new AppRestInterceptor();
+		return new AppRestInterceptor();
 	}
 
 	/**
-	 * Add interceptor to interceptor registry.
-	 *
-	 * @param       registry	   InterceptorRegistry
-	 *
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-	    registry.addInterceptor(restInterceptor()).addPathPatterns("/rest/**");
+		registry.addInterceptor(restInterceptor()).addPathPatterns("/rest/**");
 	}
-	
+
 }
