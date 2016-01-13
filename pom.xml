@@ -36,6 +36,16 @@
 			<artifactId>webservice-framework-core</artifactId>
 			<version>2.1.1-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>ro.isdc.wro4j</groupId>
+			<artifactId>wro4j-core</artifactId>
+			<version>1.7.9</version>
+		</dependency>
+		<dependency>
+			<groupId>ro.isdc.wro4j</groupId>
+			<artifactId>wro4j-extensions</artifactId>
+			<version>1.7.9</version>
+		</dependency> 
 	</dependencies>
 
 	<build>
