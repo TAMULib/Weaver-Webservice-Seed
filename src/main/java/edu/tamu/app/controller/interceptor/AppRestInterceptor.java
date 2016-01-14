@@ -9,17 +9,30 @@
  */
 package edu.tamu.app.controller.interceptor;
 
+import static edu.tamu.framework.enums.ApiResponseType.SUCCESS;
+
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Component;
 
 import edu.tamu.app.model.AppUser;
 import edu.tamu.app.model.repo.AppUserRepo;
 import edu.tamu.framework.interceptor.CoreRestInterceptor;
+import edu.tamu.framework.model.ApiResponse;
 import edu.tamu.framework.model.Credentials;
-
+/**
+ * Application Rest interceptor. Checks command, decodes and verifies token,
+ * either returns error message to frontend or continues to controller.
+ * 
+ *
+ */
+@Component
 public class AppRestInterceptor extends CoreRestInterceptor {
 
 	@Autowired
@@ -28,35 +41,66 @@ public class AppRestInterceptor extends CoreRestInterceptor {
 	@Value("${app.authority.admins}")
 	private String[] admins;
 	
+	@Autowired @Lazy
+	private SimpMessagingTemplate simpMessagingTemplate;
+	
+	private static final Logger logger = Logger.getLogger(AppStompInterceptor.class);
+	
 	@Override
 	public Credentials confirmCreateUser(Credentials shib) {
-		AppUser user = userRepo.getUserByUin(Long.parseLong(shib.getUin()));
+		
+		AppUser user;
+		String adminTarget;
+		
+		if(shib.getUin().equals("null")) {
+			user = userRepo.findByEmail(shib.getEmail());
+			adminTarget = shib.getEmail();
+			
+			if(user == null) {
+				// do not create user
+				// return null for the core interceptor to return error to ui
+				return null;
+			}
+		}
+		else {
+			user = userRepo.findByUin(Long.parseLong(shib.getUin()));
+			adminTarget = shib.getUin();
+		}
 		
 		if(user == null) {
     		
     		if(shib.getRole() == null) {
     			shib.setRole("ROLE_USER");
     		}
-        	String shibUin = shib.getUin();
+
     		for(String uin : admins) {
-    			if(uin.equals(shibUin)) {
+    			if(uin.equals(adminTarget)) {
     				shib.setRole("ROLE_ADMIN");					
     			}
     		}
     		
-    		AppUser newUser = new AppUser();
+    		user = new AppUser();
     		
-    		newUser.setUin(Long.parseLong(shib.getUin()));					
-    		newUser.setRole(shib.getRole());
+    		if(!shib.getUin().equals("null")) {
+    			user.setUin(Long.parseLong(shib.getUin()));
+    		}
     		
-    		newUser.setFirstName(shib.getFirstName());
-    		newUser.setLastName(shib.getLastName());
+			user.setRole(shib.getRole());
+
+			user.setFirstName(shib.getFirstName());
+			user.setLastName(shib.getLastName());
+			
+			user.setEmail(shib.getEmail());
     		
-    		userRepo.save(newUser);
+    		user = userRepo.save(user);
+    		
+    		logger.info("Created new user: " + shib.getFirstName() + " " + shib.getLastName() + ")");
     		
     		Map<String, Object> userMap = new HashMap<String, Object>();
-    		
-    		userMap.put("list", userRepo.findAll());    
+           
+    		userMap.put("list", userRepo.findAll());
+           
+    		simpMessagingTemplate.convertAndSend("/channel/users", new ApiResponse(SUCCESS, userMap));
     	}
     	else {
     		shib.setRole(user.getRole());
