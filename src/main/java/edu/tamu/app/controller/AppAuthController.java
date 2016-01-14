@@ -142,7 +142,7 @@ public class AppAuthController extends CoreAuthController {
 		try {
 			dataMap = objectMapper.readValue(data, new TypeReference<HashMap<String, String>>() { });
 		} catch (Exception e) {
-			e.printStackTrace();
+			return new ApiResponse(ERROR, "Could not map input data!");
 		}
 
 		String email = dataMap.get("email");
