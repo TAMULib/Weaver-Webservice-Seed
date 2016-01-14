@@ -2,7 +2,6 @@
 <groups xmlns="http://www.isdc.ro/wro">
 
     <group name="app">
-        <css>/static/theming.scss</css>
         <css>/static/scss/global.scss</css>
     </group>
     

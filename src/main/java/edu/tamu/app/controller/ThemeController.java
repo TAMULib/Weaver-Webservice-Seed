@@ -39,6 +39,7 @@ public class ThemeController
 	
 	@ApiMapping("/update")
 	public ApiResponse update(@Data String data) throws IOException {
+/* TODO Implement repo driven update that can update the content the custom wro filter will use to prep the SASS for transpiling
 		JsonNode themeValues = objectMapper.readTree(data).get("themeValues");
 		Path path = Paths.get("src/main/resources/static/theming.scss.template");
 		Charset charset = StandardCharsets.UTF_8;
@@ -67,6 +68,7 @@ public class ThemeController
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		*/
 		return new ApiResponse(ERROR,"Failed to update theme");
 	}
 
