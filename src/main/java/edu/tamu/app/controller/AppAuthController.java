@@ -39,6 +39,9 @@ public class AppAuthController extends CoreAuthController {
 	@Autowired
 	private AppUserRepo userRepo;
 	
+	@Value("${app.authority.admins}")
+	private String[] admins;
+	
 	@Value("${app.ui.host}")
 	private String uiHost;
 	
@@ -129,6 +132,15 @@ public class AppAuthController extends CoreAuthController {
 
 		AppUser user = userRepo.create(email, firstName, lastName, "ROLE_USER");
 		user.setPassword(authUtility.encodePassword(password));
+		
+		user.setRole("ROLE_USER");
+
+		for (String admin : admins) {
+			if (admin.equals(user.getEmail())) {
+				user.setRole("ROLE_ADMIN");
+			}
+		}
+		
 		user = userRepo.save(user);
 
 		return new ApiResponse(SUCCESS, "Registration successful. Please login.", user);
