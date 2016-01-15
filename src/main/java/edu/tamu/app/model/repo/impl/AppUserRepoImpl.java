@@ -13,9 +13,18 @@ public class AppUserRepoImpl implements AppUserRepoCustom {
 
 	@Override
 	public AppUser create(Long uin) {
-		AppUser user = appUserRepo.getUserByUin(uin);
+		AppUser user = appUserRepo.findByUin(uin);
 		if(user == null) {
 			return appUserRepo.save(new AppUser(uin));
+		}
+		return user;
+	}
+	
+	@Override
+	public AppUser create(String email, String firstName, String lastName, String role) {
+		AppUser user = appUserRepo.findByEmail(email);
+		if(user == null) {
+			return appUserRepo.save(new AppUser(email, firstName, lastName, role));
 		}
 		return user;
 	}

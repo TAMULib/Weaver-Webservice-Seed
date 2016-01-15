@@ -28,9 +28,19 @@ public interface AppUserRepo extends JpaRepository<AppUser, Long>, AppUserRepoCu
 	 * 
 	 * @param 		uin				Long
 	 * 
-	 * @return		UserImpl
+	 * @return		AppUser
 	 * 
 	 */
-	public AppUser getUserByUin(Long uin);
+	public AppUser findByUin(Long uin);
+	
+	/**
+	 * Retrieve user by email.
+	 * 
+	 * @param 		email				Long
+	 * 
+	 * @return		AppUser
+	 * 
+	 */
+	public AppUser findByEmail(String email);
 
 }

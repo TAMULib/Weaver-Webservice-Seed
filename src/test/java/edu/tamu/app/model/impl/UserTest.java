@@ -39,7 +39,7 @@ public class UserTest {
 		testUser2.setUin(Long.parseLong("123456789"));
 		
 		userRepo.save(testUser1);		
-		AppUser assertUser = userRepo.getUserByUin(Long.parseLong("123456789"));		
+		AppUser assertUser = userRepo.findByUin(Long.parseLong("123456789"));		
 		Assert.assertEquals("Test User1 was not added.", testUser1.getUin(), assertUser.getUin());
 	
 		userRepo.save(testUser2);		
@@ -47,7 +47,7 @@ public class UserTest {
 		Assert.assertEquals("Duplicate UIN found.", 1, allUsers.size());
 		
 		userRepo.save(testUser1);
-		testUser1 = userRepo.getUserByUin(Long.parseLong("123456789"));
+		testUser1 = userRepo.findByUin(Long.parseLong("123456789"));
 		
 		userRepo.delete(testUser1);		
 		allUsers = (List<AppUser>) userRepo.findAll();		
