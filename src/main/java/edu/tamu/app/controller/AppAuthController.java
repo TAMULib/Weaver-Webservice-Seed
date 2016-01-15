@@ -72,7 +72,7 @@ public class AppAuthController extends CoreAuthController {
 				return new ApiResponse(ERROR, "Unable to send email! " + email);
 			}
 
-			return new ApiResponse(SUCCESS, parameters);
+			return new ApiResponse(SUCCESS, "An email has been sent to " + email + ". Please verify email to continue registration.", parameters);
 		}
 
 		Map<String, String> dataMap = new HashMap<String, String>();
