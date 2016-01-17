@@ -16,9 +16,7 @@ import edu.tamu.framework.util.HttpUtility;
 
 @Controller
 @ApiMapping("/theme")
-public class ThemeController 
-{
-	
+public class ThemeController {
 	@Autowired
 	private HttpUtility httpUtility;
 	
