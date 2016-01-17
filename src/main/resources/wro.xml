@@ -2,7 +2,6 @@
 <groups xmlns="http://www.isdc.ro/wro">
 
     <group name="app">
-    	<css>themeManagerService</css>
         <css>http://savell.evans.tamu.edu/tamu-ui-seed/bower_components/core/app/resources/styles/sass/main.scss</css>
         <css>http://savell.evans.tamu.edu/tamu-ui-seed/resources/styles/sass/app.scss</css>
     </group>
