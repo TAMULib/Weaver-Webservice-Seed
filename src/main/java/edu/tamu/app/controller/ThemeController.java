@@ -1,8 +1,11 @@
 package edu.tamu.app.controller;
 
-import static edu.tamu.framework.enums.ApiResponseType.ERROR;
+import static edu.tamu.framework.enums.ApiResponseType.SUCCESS;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,6 +15,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.tamu.framework.aspect.annotation.ApiMapping;
 import edu.tamu.framework.aspect.annotation.Data;
 import edu.tamu.framework.model.ApiResponse;
+import edu.tamu.framework.model.CoreTheme;
+import edu.tamu.framework.model.repo.CoreThemeRepo;
+import edu.tamu.framework.service.ThemeManagerService;
 import edu.tamu.framework.util.HttpUtility;
 
 @Controller
@@ -23,39 +29,29 @@ public class ThemeController {
 	@Autowired
 	private ObjectMapper objectMapper;
 	
-	@ApiMapping("/update")
-	public ApiResponse update(@Data String data) throws IOException {
-/* TODO Implement repo driven update that can update the content the custom wro filter will use to prep the SASS for transpiling
-		JsonNode themeValues = objectMapper.readTree(data).get("themeValues");
-		Path path = Paths.get("src/main/resources/static/theming.scss.template");
-		Charset charset = StandardCharsets.UTF_8;
-		String content = new String(Files.readAllBytes(path),charset);
-
-		Iterator<Entry<String, JsonNode>> values = themeValues.fields();
-
-		while(values.hasNext()) {
-			Entry<String, JsonNode> currentRow = values.next();
-			String field = currentRow.getKey();
-			String value = currentRow.getValue().asText();
-			String fieldValue = value != "" ? value:"inherit";
-			content = content.replaceAll("\\{"+field+"\\}", fieldValue);
-		}
+	@Autowired 
+	CoreThemeRepo coreThemeRepo;
+	
+	@Autowired
+	ThemeManagerService themeManagerService;
+	
+	@ApiMapping("/all")
+	public ApiResponse getAll() {
+		Map<String,List<CoreTheme>> coreThemes = new HashMap<String,List<CoreTheme>>();
+		coreThemes.put("list", coreThemeRepo.findAll());
+		return new ApiResponse(SUCCESS,coreThemes);
+	}
+	
+	@ApiMapping("/update-property")
+	public ApiResponse updateProperty(@Data String data) throws IOException {
+		Long themeId = objectMapper.readTree(data).get("themeId").asLong();
+		Long propertyId = objectMapper.readTree(data).get("propertyId").asLong();
+		String value = objectMapper.readTree(data).get("value").asText();
+		//TODO move all repo interaction to themeManagerService and expose methods for use here
+		coreThemeRepo.updateThemeProperty(themeId,propertyId,value);
+		themeManagerService.refreshCurrentTheme();
 		
-		try {
-			File file = new File("src/main/resources/static/theming.scss");
-
-			FileWriter fw = new FileWriter(file.getAbsoluteFile());
-			BufferedWriter bw = new BufferedWriter(fw);
-			bw.write(content);
-			bw.close();
-
-			System.out.println("\n\nTheme SCSS updated\n\n");
-			return new ApiResponse(SUCCESS,"Theme updated");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		*/
-		return new ApiResponse(ERROR,"Failed to update theme");
+		return new ApiResponse(SUCCESS,"Theme updated",themeManagerService.getCurrentTheme());
 	}
 
 }
