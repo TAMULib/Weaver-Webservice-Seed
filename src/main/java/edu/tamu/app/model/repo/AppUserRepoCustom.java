@@ -24,4 +24,6 @@ public interface AppUserRepoCustom {
 	 */
 	public AppUser create(Long uin);
 
+	public AppUser create(String email, String firstName, String lastName, String role);
+
 }
