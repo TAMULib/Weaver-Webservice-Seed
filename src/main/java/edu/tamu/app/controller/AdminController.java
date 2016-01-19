@@ -34,8 +34,7 @@ public class AdminController {
 	 * Websocket endpoint to request to broadcast message.
 	 * 
 	 * @param data
-	 * 			@Data String
-	 * 
+	 *            String
 	 * @return ApiResponse
 	 * 
 	 * @throws Exception

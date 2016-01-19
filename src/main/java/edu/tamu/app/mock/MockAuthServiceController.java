@@ -61,9 +61,9 @@ public class MockAuthServiceController {
 	 * payload.
 	 *
 	 * @param params
-	 * 			@RequestParam() Map<String,String>
+	 *            Map<String,String>
 	 * @param headers
-	 * 			@RequestHeader() Map<String,String>
+	 *            Map<String,String>
 	 *
 	 * @return ModelAndView
 	 *
@@ -93,9 +93,9 @@ public class MockAuthServiceController {
 	 * payload.
 	 *
 	 * @param params
-	 * 			@RequestParam() Map<String,String>
+	 * @RequestParam() Map<String,String>
 	 * @param headers
-	 * 			@RequestHeader() Map<String,String>
+	 * @RequestHeader() Map<String,String>
 	 *
 	 * @return JWT
 	 *

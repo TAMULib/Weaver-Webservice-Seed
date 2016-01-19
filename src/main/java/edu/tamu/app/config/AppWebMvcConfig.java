@@ -18,7 +18,7 @@ import org.springframework.web.servlet.resource.ResourceUrlEncodingFilter;
 import edu.tamu.framework.config.CoreWebMvcConfig;
 
 /**
- * 
+ * Application Web Mvc Configuration.
  */
 @Configuration
 @AutoConfigureAfter(DispatcherServletAutoConfiguration.class)

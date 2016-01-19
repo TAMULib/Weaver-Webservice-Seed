@@ -19,7 +19,7 @@ import edu.tamu.app.controller.interceptor.AppRestInterceptor;
 import edu.tamu.framework.config.CoreWebAppConfig;
 
 /**
- * Web MVC Configuration for application controller.
+ * TAMU Webservice Web App Configuration.
  * 
  */
 @Configuration
@@ -43,7 +43,7 @@ public class TamuWebserviceSeedWebAppConfig extends CoreWebAppConfig {
 	 */
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(restInterceptor()).addPathPatterns("/rest/**");
+		registry.addInterceptor(restInterceptor()).addPathPatterns("/**");
 	}
 
 }

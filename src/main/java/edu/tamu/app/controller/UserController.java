@@ -41,7 +41,7 @@ public class UserController {
 	 * Websocket endpoint to request credentials.
 	 * 
 	 * @param shibObj
-	 * 			@Shib Object
+	 *            Object
 	 * 
 	 * @return ApiResponse
 	 * 
@@ -55,6 +55,7 @@ public class UserController {
 	}
 
 	/**
+	 * Returns all users.
 	 * 
 	 * @return
 	 * @throws Exception
