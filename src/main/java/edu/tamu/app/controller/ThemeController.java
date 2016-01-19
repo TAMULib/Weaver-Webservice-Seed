@@ -47,9 +47,7 @@ public class ThemeController {
 		Long themeId = objectMapper.readTree(data).get("themeId").asLong();
 		Long propertyId = objectMapper.readTree(data).get("propertyId").asLong();
 		String value = objectMapper.readTree(data).get("value").asText();
-		//TODO move all repo interaction to themeManagerService and expose methods for use here
-		coreThemeRepo.updateThemeProperty(themeId,propertyId,value);
-		themeManagerService.refreshCurrentTheme();
+		themeManagerService.updateThemeProperty(themeId,propertyId,value);
 		
 		return new ApiResponse(SUCCESS,"Theme updated",themeManagerService.getCurrentTheme());
 	}
