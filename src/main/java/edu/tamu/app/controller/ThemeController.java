@@ -58,4 +58,11 @@ public class ThemeController {
 		CoreTheme newTheme = coreThemeRepo.create(themeName);
 		return new ApiResponse(SUCCESS,"Theme added",newTheme);
 	}
+	
+	@ApiMapping("/activate-theme")
+	public ApiResponse activateTheme(@Data String data) throws IOException {
+		Long themeId = objectMapper.readTree(data).get("themeId").asLong();
+		themeManagerService.setCurrentTheme(coreThemeRepo.getById(themeId));
+		return new ApiResponse(SUCCESS,"Theme activated");
+	}
 }
