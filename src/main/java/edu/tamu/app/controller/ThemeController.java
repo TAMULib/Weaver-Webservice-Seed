@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.tamu.framework.aspect.annotation.ApiMapping;
 import edu.tamu.framework.aspect.annotation.Data;
+import edu.tamu.framework.aspect.annotation.Auth;
 import edu.tamu.framework.model.ApiResponse;
 import edu.tamu.framework.model.CoreTheme;
 import edu.tamu.framework.model.repo.CoreThemeRepo;
@@ -36,6 +37,7 @@ public class ThemeController {
 	ThemeManagerService themeManagerService;
 	
 	@ApiMapping("/all")
+	@Auth(role="ROLE_ADMIN")
 	public ApiResponse getAll() {
 		Map<String,List<CoreTheme>> coreThemes = new HashMap<String,List<CoreTheme>>();
 		coreThemes.put("list", coreThemeRepo.findAll());
@@ -43,6 +45,7 @@ public class ThemeController {
 	}
 	
 	@ApiMapping("/update-property")
+	@Auth(role="ROLE_ADMIN")
 	public ApiResponse updateProperty(@Data String data) throws IOException {
 		Long themeId = objectMapper.readTree(data).get("themeId").asLong();
 		Long propertyId = objectMapper.readTree(data).get("propertyId").asLong();
@@ -53,6 +56,7 @@ public class ThemeController {
 	}
 	
 	@ApiMapping("/add-theme")
+	@Auth(role="ROLE_ADMIN")
 	public ApiResponse addTheme(@Data String data) throws IOException {
 		String themeName = objectMapper.readTree(data).get("newTheme").get("name").asText();
 		CoreTheme newTheme = coreThemeRepo.create(themeName);
@@ -60,6 +64,7 @@ public class ThemeController {
 	}
 	
 	@ApiMapping("/activate-theme")
+	@Auth(role="ROLE_ADMIN")
 	public ApiResponse activateTheme(@Data String data) throws IOException {
 		Long themeId = objectMapper.readTree(data).get("themeId").asLong();
 		themeManagerService.setCurrentTheme(coreThemeRepo.getById(themeId));
