@@ -8,13 +8,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.tamu.framework.aspect.annotation.ApiMapping;
-import edu.tamu.framework.aspect.annotation.Data;
 import edu.tamu.framework.aspect.annotation.Auth;
+import edu.tamu.framework.aspect.annotation.Data;
 import edu.tamu.framework.model.ApiResponse;
 import edu.tamu.framework.model.CoreTheme;
 import edu.tamu.framework.model.repo.CoreThemeRepo;
@@ -29,6 +30,9 @@ public class ThemeController {
 	
 	@Autowired
 	private ObjectMapper objectMapper;
+	
+	@Autowired
+	private SimpMessagingTemplate simpMessagingTemplate;
 	
 	@Autowired 
 	CoreThemeRepo coreThemeRepo;
@@ -60,6 +64,8 @@ public class ThemeController {
 	public ApiResponse addTheme(@Data String data) throws IOException {
 		String themeName = objectMapper.readTree(data).get("newTheme").get("name").asText();
 		CoreTheme newTheme = coreThemeRepo.create(themeName);
+		simpMessagingTemplate.convertAndSend("/channel/theme/", new ApiResponse(SUCCESS, newTheme));
+
 		return new ApiResponse(SUCCESS,"Theme added",newTheme);
 	}
 	
