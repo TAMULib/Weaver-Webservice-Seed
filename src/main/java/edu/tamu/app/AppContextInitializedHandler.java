@@ -10,6 +10,7 @@
 package edu.tamu.app;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -31,6 +32,9 @@ class AppContextInitializedHandler extends CoreContextInitializedHandler {
 	@Autowired
     ApplicationContext applicationContext;
 	
+	@Value("${app.ui.path}")
+	String uiPath;
+	
 	@Override
 	protected void before(ContextRefreshedEvent event) {
 
@@ -42,6 +46,9 @@ class AppContextInitializedHandler extends CoreContextInitializedHandler {
 //        for (String beanName : beanNames) {
 //            System.out.println(beanName);
 //        }
+		
+		System.out.println("\n\n\n\n" + uiPath + "\n\n\n\n");
+		
 	}
     
 }
