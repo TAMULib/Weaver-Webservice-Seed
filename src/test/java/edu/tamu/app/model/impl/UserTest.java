@@ -32,23 +32,17 @@ public class UserTest {
 	@Test
 	public void testMethod() {
 		
-		AppUser testUser1 = new AppUser();
-		testUser1.setUin(Long.parseLong("123456789"));
-		
-		AppUser testUser2 = new AppUser();
-		testUser2.setUin(Long.parseLong("123456789"));
-		
-		userRepo.save(testUser1);		
-		AppUser assertUser = userRepo.getUserByUin(Long.parseLong("123456789"));		
+		// Test create user
+		AppUser testUser1 = userRepo.create(Long.parseLong("123456789"));		
+		AppUser assertUser = userRepo.findByUin(Long.parseLong("123456789"));		
 		Assert.assertEquals("Test User1 was not added.", testUser1.getUin(), assertUser.getUin());
 	
-		userRepo.save(testUser2);		
+		// Test disallow duplicate UINs
+		userRepo.create(Long.parseLong("123456789"));		
 		List<AppUser> allUsers = (List<AppUser>) userRepo.findAll();		
 		Assert.assertEquals("Duplicate UIN found.", 1, allUsers.size());
-		
-		userRepo.save(testUser1);
-		testUser1 = userRepo.getUserByUin(Long.parseLong("123456789"));
-		
+				
+		// Test delete user
 		userRepo.delete(testUser1);		
 		allUsers = (List<AppUser>) userRepo.findAll();		
 		Assert.assertEquals("Test User1 was not removed.", 0, allUsers.size());
