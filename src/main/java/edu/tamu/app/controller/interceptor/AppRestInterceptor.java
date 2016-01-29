@@ -45,7 +45,7 @@ public class AppRestInterceptor extends CoreRestInterceptor {
 	@Autowired @Lazy
 	private SimpMessagingTemplate simpMessagingTemplate;
 	
-	private final Logger logger = LoggerFactory.getLogger(AppStompInterceptor.class);
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	@Override
 	public Credentials confirmCreateUser(Credentials shib) {
