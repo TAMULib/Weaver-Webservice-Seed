@@ -70,7 +70,7 @@ public class AppAuthController extends CoreAuthController {
 
 			try {
 				emailUtility.sendEmail(email, subject, content);
-			} catch (MessagingException e) {
+			} catch (Exception e) {
 				logger.debug("Unable to send email! " + email);
 				return new ApiResponse(ERROR, "Unable to send email! " + email);
 			}
