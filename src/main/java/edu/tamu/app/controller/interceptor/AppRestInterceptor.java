@@ -14,7 +14,8 @@ import static edu.tamu.framework.enums.ApiResponseType.SUCCESS;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
@@ -45,8 +46,8 @@ public class AppRestInterceptor extends CoreRestInterceptor {
 	@Lazy
 	private SimpMessagingTemplate simpMessagingTemplate;
 
-	private static final Logger logger = Logger.getLogger(AppStompInterceptor.class);
-
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	
 	@Override
 	public Credentials confirmCreateUser(Credentials shib) {
 
