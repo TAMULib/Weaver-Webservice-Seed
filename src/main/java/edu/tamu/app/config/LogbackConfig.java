@@ -1,13 +1,10 @@
 package edu.tamu.app.config;
 
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.filter.ThresholdFilter;
@@ -20,6 +17,9 @@ import ch.qos.logback.ext.spring.ApplicationContextHolder;
 
 @Configuration
 public class LogbackConfig {
+	
+	@Value("${logging.encoder.pattern}")
+	private String encoderPattern;
 	
 	@Value("${logging.rolling.file}")
 	private String rollingFile;
@@ -47,7 +47,7 @@ public class LogbackConfig {
     public PatternLayoutEncoder encoder(LoggerContext ctx) {
         PatternLayoutEncoder encoder = new PatternLayoutEncoder();
         encoder.setContext(ctx);
-        encoder.setPattern("%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n");
+        encoder.setPattern(encoderPattern);
         return encoder;
     }
 
@@ -80,45 +80,5 @@ public class LogbackConfig {
         appender.setEncoder(encoder);
         return appender;
     }
-    
-    @Autowired
-    private LoggerContext loggerContext;
-    
-    @Autowired
-    private ConsoleAppender consoleAppender;
-    
-//	Let application.properties define this
-//    @Bean
-//    public Logger registerSpringLogger() {    	
-//        Logger logger = loggerContext.getLogger("org.springframework");
-//        logger.addAppender(consoleAppender);
-//        logger.setLevel(Level.DEBUG);
-//        return logger;
-//    }
-    
-    @Bean
-    public Logger registerJDBCTransactionLogger() {
-        Logger logger = loggerContext.getLogger("org.hibernate.transactionk");
-        logger.addAppender(consoleAppender);
-        logger.setLevel(Level.DEBUG);
-        return logger;
-    }
-    
-    @Bean
-    public Logger registerJDBCLogger() {
-        Logger logger = loggerContext.getLogger("org.hibernate.jdbc");
-        logger.addAppender(consoleAppender);
-        logger.setLevel(Level.DEBUG);
-        return logger;
-    }
-    
-    @Bean
-    public Logger registerJPALogger() {
-        Logger logger = loggerContext.getLogger("org.springframework.orm.jpa");
-        logger.addAppender(consoleAppender);
-        logger.setLevel(Level.DEBUG);
-        return logger;
-    }
-
     
 }
