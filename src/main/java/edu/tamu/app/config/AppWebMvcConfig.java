@@ -24,6 +24,9 @@ import edu.tamu.framework.config.CoreWebMvcConfig;
 @AutoConfigureAfter(DispatcherServletAutoConfiguration.class)
 public class AppWebMvcConfig extends CoreWebMvcConfig {
 
+	/**
+	 * 
+	 */
 	@Bean
 	public ResourceUrlEncodingFilter resourceUrlEncodingFilter() {
 		return new ResourceUrlEncodingFilter();

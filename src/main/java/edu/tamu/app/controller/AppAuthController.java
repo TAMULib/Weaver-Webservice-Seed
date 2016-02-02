@@ -1,3 +1,12 @@
+/* 
+ * AppAuthController.java 
+ * 
+ * Version: 
+ *     $Id$ 
+ * 
+ * Revisions: 
+ *     $Log$ 
+ */
 package edu.tamu.app.controller;
 
 import static edu.tamu.framework.enums.ApiResponseType.ERROR;
@@ -15,7 +24,6 @@ import java.util.concurrent.TimeUnit;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.mail.MessagingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +40,10 @@ import edu.tamu.framework.aspect.annotation.Parameters;
 import edu.tamu.framework.controller.CoreAuthController;
 import edu.tamu.framework.model.ApiResponse;
 
+/**
+ * 
+ *
+ */
 @RestController
 @ApiMapping("/auth")
 public class AppAuthController extends CoreAuthController {
@@ -45,6 +57,9 @@ public class AppAuthController extends CoreAuthController {
 	@Value("${app.ui.host}")
 	private String uiHost;
 
+	/**
+	 * 
+	 */
 	@Override
 	@ApiMapping(value = "/register", method = POST)
 	public ApiResponse registration(@Data String data, @Parameters Map<String, String[]> parameters) {
@@ -146,6 +161,9 @@ public class AppAuthController extends CoreAuthController {
 		return new ApiResponse(SUCCESS, "Registration successful. Please login.", user);
 	}
 
+	/**
+	 * 
+	 */
 	@Override
 	@ApiMapping("/login")
 	public ApiResponse login(@Data String data) {

@@ -1,5 +1,5 @@
 /* 
- * MyLibraryWebAppConfig.java 
+ * TamuWebserviceSeedWebAppConfig.java 
  * 
  * Version: 
  *     $Id$ 

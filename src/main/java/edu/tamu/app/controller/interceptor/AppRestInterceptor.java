@@ -42,12 +42,14 @@ public class AppRestInterceptor extends CoreRestInterceptor {
 	@Value("${app.authority.admins}")
 	private String[] admins;
 
-	@Autowired
-	@Lazy
+	@Autowired @Lazy
 	private SimpMessagingTemplate simpMessagingTemplate;
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Credentials confirmCreateUser(Credentials shib) {
 

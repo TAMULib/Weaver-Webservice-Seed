@@ -31,6 +31,9 @@ public class AppServletConfig {
 		return new ServletCustomizer();
 	}
 
+	/**
+	 * 
+	 */
 	private static class ServletCustomizer implements EmbeddedServletContainerCustomizer {
 
 		/**
@@ -43,5 +46,7 @@ public class AppServletConfig {
 			// mm.add("png", "image/png");
 			// cesc.setMimeMappings(mm);
 		}
+		
 	}
+	
 }
