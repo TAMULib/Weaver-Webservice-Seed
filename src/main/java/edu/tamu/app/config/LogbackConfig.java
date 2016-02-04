@@ -32,10 +32,10 @@ public class LogbackConfig {
     @Value("${logging.encoder.pattern}")
     private String encoderPattern;
 
-    @Value("${logging.rolling.file}")
-    private String rollingFile;
+    @Value("${logging.file}")
+    private String loggingFile;
 
-    @Value("${logging.rolling.file}")
+    @Value("${logging.rolling.pattern}")
     private String rollingPattern;
 
     @Value("${logging.rolling.file-size}")
@@ -97,7 +97,7 @@ public class LogbackConfig {
     @Bean(initMethod = "start", destroyMethod = "stop")
     public RollingFileAppender rollingFileAppender(LoggerContext ctx, PatternLayoutEncoder encoder) {
         RollingFileAppender appender = new RollingFileAppender();
-        appender.setFile(rollingFile);
+        appender.setFile(loggingFile);
         TimeBasedRollingPolicy rollingPolicy = new TimeBasedRollingPolicy();
         rollingPolicy.setParent(appender);
         rollingPolicy.setFileNamePattern(rollingPattern);
