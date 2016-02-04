@@ -19,140 +19,138 @@ import edu.tamu.framework.model.AbstractCoreUserImpl;
 /**
  * Application User entity.
  * 
- * @author
- *
  */
 @Entity
 public class AppUser extends AbstractCoreUserImpl {
 
-	@Column(nullable = true)
-	private String netid;
+    @Column(nullable = true)
+    private String netid;
 
-	@Column(nullable = true, unique = true)
-	private String email;
+    @Column(nullable = true, unique = true)
+    private String email;
 
-	// encoded password
-	@JsonIgnore
-	@Column(nullable = true)
-	private String password;
+    // encoded password
+    @JsonIgnore
+    @Column(nullable = true)
+    private String password;
 
-	@Column(nullable = true)
-	private String firstName;
+    @Column(nullable = true)
+    private String firstName;
 
-	@Column(nullable = true)
-	private String lastName;
+    @Column(nullable = true)
+    private String lastName;
 
-	/**
-	 * Constructor for the application user
-	 * 
-	 */
-	public AppUser() {
-		super();
-	}
+    /**
+     * Constructor for the application user
+     * 
+     */
+    public AppUser() {
+        super();
+    }
 
-	/**
-	 * Constructor for application user with uin passed.
-	 * 
-	 * @param uin
-	 *            Long
-	 * 
-	 */
-	public AppUser(Long uin) {
-		super(uin);
-	}
+    /**
+     * Constructor for application user with uin passed.
+     * 
+     * @param uin
+     *            Long
+     * 
+     */
+    public AppUser(Long uin) {
+        super(uin);
+    }
 
-	/**
-	 * Constructor for application user with uin passed.
-	 * 
-	 * @param uin
-	 *            Long
-	 * 
-	 */
-	public AppUser(String email, String firstName, String lastName, String role) {
-		setEmail(email);
-		setFirstName(firstName);
-		setLastName(lastName);
-		setRole(role);
-	}
-	
-	/**
-	 * @return the netid
-	 */
-	public String getNetid() {
-		return netid;
-	}
+    /**
+     * Constructor for application user with uin passed.
+     * 
+     * @param uin
+     *            Long
+     * 
+     */
+    public AppUser(String email, String firstName, String lastName, String role) {
+        setEmail(email);
+        setFirstName(firstName);
+        setLastName(lastName);
+        setRole(role);
+    }
 
-	/**
-	 * @param netid
-	 *            the netid to set
-	 */
-	public void setNetid(String netid) {
-		this.netid = netid;
-	}
+    /**
+     * @return the netid
+     */
+    public String getNetid() {
+        return netid;
+    }
 
-	/**
-	 * @return the email
-	 */
-	public String getEmail() {
-		return email;
-	}
+    /**
+     * @param netid
+     *            the netid to set
+     */
+    public void setNetid(String netid) {
+        this.netid = netid;
+    }
 
-	/**
-	 * @param email
-	 *            the email to set
-	 */
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    /**
+     * @return the email
+     */
+    public String getEmail() {
+        return email;
+    }
 
-	/**
-	 * @return the password
-	 */
-	public String getPassword() {
-		return password;
-	}
+    /**
+     * @param email
+     *            the email to set
+     */
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	/**
-	 * @param password
-	 *            the password to set
-	 */
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    /**
+     * @return the password
+     */
+    public String getPassword() {
+        return password;
+    }
 
-	/**
-	 * 
-	 * @return firstName
-	 * 
-	 */
-	public String getFirstName() {
-		return firstName;
-	}
+    /**
+     * @param password
+     *            the password to set
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	/**
-	 * @param firstName
-	 *            String
-	 * 
-	 */
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
+    /**
+     * 
+     * @return firstName
+     * 
+     */
+    public String getFirstName() {
+        return firstName;
+    }
 
-	/**
-	 * @return lastName
-	 * 
-	 */
-	public String getLastName() {
-		return lastName;
-	}
+    /**
+     * @param firstName
+     *            String
+     * 
+     */
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 
-	/**
-	 * @param lastName
-	 *            String
-	 * 
-	 */
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
+    /**
+     * @return lastName
+     * 
+     */
+    public String getLastName() {
+        return lastName;
+    }
+
+    /**
+     * @param lastName
+     *            String
+     * 
+     */
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
 }

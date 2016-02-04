@@ -1,5 +1,5 @@
 /* 
- * ContextInitializedHandler.java 
+ * AppContextInitializedHandler.java 
  * 
  * Version: 
  *     $Id$ 
@@ -18,30 +18,31 @@ import org.springframework.stereotype.Component;
 import edu.tamu.framework.CoreContextInitializedHandler;
 import edu.tamu.framework.model.repo.SymlinkRepo;
 
-/** 
+/**
  * Handler for when the servlet context refreshes.
  * 
- * @author
- *
  */
 @Component
 @EnableConfigurationProperties(SymlinkRepo.class)
 class AppContextInitializedHandler extends CoreContextInitializedHandler {
 
-	@Autowired
+    @Autowired
     ApplicationContext applicationContext;
-	
-	@Override
-	protected void before(ContextRefreshedEvent event) {
 
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void before(ContextRefreshedEvent event) {
 
-	@Override
-	protected void after(ContextRefreshedEvent event) {		
-//		String[] beanNames = applicationContext.getBeanDefinitionNames();
-//        for (String beanName : beanNames) {
-//            System.out.println(beanName);
-//        }
-	}
-    
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void after(ContextRefreshedEvent event) {
+
+    }
+
 }

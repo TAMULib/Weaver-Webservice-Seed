@@ -17,36 +17,31 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 import edu.tamu.framework.config.CoreWebSocketConfig;
 import edu.tamu.app.controller.interceptor.AppStompInterceptor;
 
-/** 
+/**
  * Application Web Socket Configuration.
  * 
- * @author
- *
  */
 @Configuration
 @EnableWebSocketMessageBroker
 public class AppWebSocketConfig extends CoreWebSocketConfig {
-		
-	/**
-	 * Configure client inbound channel. Sets stomp interceptor. 
-	 * 
-	 * @param       registration   	ChannelRegistration
-	 * 
-	 */
-	@Override
-	public void configureClientInboundChannel(ChannelRegistration registration) {
-		registration.setInterceptors(appStompInterceptor());
-	}
-	
-	/**
-	 * Stomp interceptor bean.
-	 * 
-	 * @return		StompInterceptor
-	 * 
-	 */
-	@Bean
-	public AppStompInterceptor appStompInterceptor() {
-		return new AppStompInterceptor();
-	}
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+        registration.setInterceptors(appStompInterceptor());
+    }
+
+    /**
+     * Stomp interceptor bean.
+     * 
+     * @return StompInterceptor
+     * 
+     */
+    @Bean
+    public AppStompInterceptor appStompInterceptor() {
+        return new AppStompInterceptor();
+    }
 
 }

@@ -17,30 +17,29 @@ import edu.tamu.app.model.AppUser;
 /**
  * Application User repository.
  * 
- * @author
- *
  */
 @Repository
 public interface AppUserRepo extends JpaRepository<AppUser, Long>, AppUserRepoCustom {
-	
-	/**
-	 * Retrieve user by UIN.
-	 * 
-	 * @param 		uin				Long
-	 * 
-	 * @return		AppUser
-	 * 
-	 */
-	public AppUser findByUin(Long uin);
-	
-	/**
-	 * Retrieve user by email.
-	 * 
-	 * @param 		email				Long
-	 * 
-	 * @return		AppUser
-	 * 
-	 */
-	public AppUser findByEmail(String email);
+
+    /**
+     * Retrieve user by UIN.
+     * 
+     * @param uin
+     *            Long
+     * 
+     * @return AppUser
+     */
+    public AppUser findByUin(Long uin);
+
+    /**
+     * Retrieve user by email.
+     * 
+     * @param email
+     *            Long
+     * 
+     * @return AppUser
+     * 
+     */
+    public AppUser findByEmail(String email);
 
 }
