@@ -25,23 +25,23 @@ import edu.tamu.app.controller.interceptor.AppStompInterceptor;
 @EnableWebSocketMessageBroker
 public class AppWebSocketConfig extends CoreWebSocketConfig {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void configureClientInboundChannel(ChannelRegistration registration) {
-		registration.setInterceptors(appStompInterceptor());
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+        registration.setInterceptors(appStompInterceptor());
+    }
 
-	/**
-	 * Stomp interceptor bean.
-	 * 
-	 * @return StompInterceptor
-	 * 
-	 */
-	@Bean
-	public AppStompInterceptor appStompInterceptor() {
-		return new AppStompInterceptor();
-	}
+    /**
+     * Stomp interceptor bean.
+     * 
+     * @return StompInterceptor
+     * 
+     */
+    @Bean
+    public AppStompInterceptor appStompInterceptor() {
+        return new AppStompInterceptor();
+    }
 
 }

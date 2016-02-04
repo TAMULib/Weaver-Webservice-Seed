@@ -36,75 +36,75 @@ import edu.tamu.framework.service.ThemeManagerService;
 @Controller
 @ApiMapping("/theme")
 public class ThemeController {
-    
-	@Autowired
-	private ObjectMapper objectMapper;
 
-	@Autowired
-	private SimpMessagingTemplate simpMessagingTemplate;
+    @Autowired
+    private ObjectMapper objectMapper;
 
-	@Autowired
-	private CoreThemeRepo coreThemeRepo;
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
 
-	@Autowired
-	private ThemeManagerService themeManagerService;
+    @Autowired
+    private CoreThemeRepo coreThemeRepo;
 
-	/**
-	 * 
-	 * @return
-	 */
-	@ApiMapping("/all")
-	@Auth(role = "ROLE_ADMIN")
-	public ApiResponse getAll() {
-		Map<String, List<CoreTheme>> coreThemes = new HashMap<String, List<CoreTheme>>();
-		coreThemes.put("list", coreThemeRepo.findAll());
-		return new ApiResponse(SUCCESS, coreThemes);
-	}
+    @Autowired
+    private ThemeManagerService themeManagerService;
 
-	/**
-	 * 
-	 * @param data
-	 * @return
-	 * @throws IOException
-	 */
-	@ApiMapping("/update-property")
-	@Auth(role = "ROLE_ADMIN")
-	public ApiResponse updateProperty(@Data String data) throws IOException {
-		Long themeId = objectMapper.readTree(data).get("themeId").asLong();
-		Long propertyId = objectMapper.readTree(data).get("propertyId").asLong();
-		String value = objectMapper.readTree(data).get("value").asText();
-		themeManagerService.updateThemeProperty(themeId, propertyId, value);
+    /**
+     * 
+     * @return
+     */
+    @ApiMapping("/all")
+    @Auth(role = "ROLE_ADMIN")
+    public ApiResponse getAll() {
+        Map<String, List<CoreTheme>> coreThemes = new HashMap<String, List<CoreTheme>>();
+        coreThemes.put("list", coreThemeRepo.findAll());
+        return new ApiResponse(SUCCESS, coreThemes);
+    }
 
-		return new ApiResponse(SUCCESS, "Theme updated", themeManagerService.getCurrentTheme());
-	}
+    /**
+     * 
+     * @param data
+     * @return
+     * @throws IOException
+     */
+    @ApiMapping("/update-property")
+    @Auth(role = "ROLE_ADMIN")
+    public ApiResponse updateProperty(@Data String data) throws IOException {
+        Long themeId = objectMapper.readTree(data).get("themeId").asLong();
+        Long propertyId = objectMapper.readTree(data).get("propertyId").asLong();
+        String value = objectMapper.readTree(data).get("value").asText();
+        themeManagerService.updateThemeProperty(themeId, propertyId, value);
 
-	/**
-	 * 
-	 * @param data
-	 * @return
-	 * @throws IOException
-	 */
-	@ApiMapping("/add-theme")
-	@Auth(role = "ROLE_ADMIN")
-	public ApiResponse addTheme(@Data String data) throws IOException {
-		String themeName = objectMapper.readTree(data).get("newTheme").get("name").asText();
-		CoreTheme newTheme = coreThemeRepo.create(themeName);
-		simpMessagingTemplate.convertAndSend("/channel/theme/", new ApiResponse(SUCCESS, newTheme));
+        return new ApiResponse(SUCCESS, "Theme updated", themeManagerService.getCurrentTheme());
+    }
 
-		return new ApiResponse(SUCCESS, "Theme added", newTheme);
-	}
+    /**
+     * 
+     * @param data
+     * @return
+     * @throws IOException
+     */
+    @ApiMapping("/add-theme")
+    @Auth(role = "ROLE_ADMIN")
+    public ApiResponse addTheme(@Data String data) throws IOException {
+        String themeName = objectMapper.readTree(data).get("newTheme").get("name").asText();
+        CoreTheme newTheme = coreThemeRepo.create(themeName);
+        simpMessagingTemplate.convertAndSend("/channel/theme/", new ApiResponse(SUCCESS, newTheme));
 
-	/**
-	 * 
-	 * @param data
-	 * @return
-	 * @throws IOException
-	 */
-	@ApiMapping("/activate-theme")
-	@Auth(role = "ROLE_ADMIN")
-	public ApiResponse activateTheme(@Data String data) throws IOException {
-		Long themeId = objectMapper.readTree(data).get("themeId").asLong();
-		themeManagerService.setCurrentTheme(coreThemeRepo.getById(themeId));
-		return new ApiResponse(SUCCESS, "Theme activated");
-	}
+        return new ApiResponse(SUCCESS, "Theme added", newTheme);
+    }
+
+    /**
+     * 
+     * @param data
+     * @return
+     * @throws IOException
+     */
+    @ApiMapping("/activate-theme")
+    @Auth(role = "ROLE_ADMIN")
+    public ApiResponse activateTheme(@Data String data) throws IOException {
+        Long themeId = objectMapper.readTree(data).get("themeId").asLong();
+        themeManagerService.setCurrentTheme(coreThemeRepo.getById(themeId));
+        return new ApiResponse(SUCCESS, "Theme activated");
+    }
 }

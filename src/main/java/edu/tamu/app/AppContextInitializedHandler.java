@@ -26,23 +26,23 @@ import edu.tamu.framework.model.repo.SymlinkRepo;
 @EnableConfigurationProperties(SymlinkRepo.class)
 class AppContextInitializedHandler extends CoreContextInitializedHandler {
 
-	@Autowired
-	ApplicationContext applicationContext;
+    @Autowired
+    ApplicationContext applicationContext;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void before(ContextRefreshedEvent event) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void before(ContextRefreshedEvent event) {
 
-	}
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void after(ContextRefreshedEvent event) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void after(ContextRefreshedEvent event) {
 
-	}
+    }
 
 }

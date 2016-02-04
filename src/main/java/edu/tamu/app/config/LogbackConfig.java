@@ -1,3 +1,12 @@
+/* 
+ * LogbackConfig.java 
+ * 
+ * Version: 
+ *     $Id$ 
+ * 
+ * Revisions: 
+ *     $Log$ 
+ */
 package edu.tamu.app.config;
 
 import org.slf4j.LoggerFactory;
@@ -14,6 +23,9 @@ import ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy;
 import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
 import ch.qos.logback.ext.spring.ApplicationContextHolder;
 
+/**
+ * 
+ */
 @Configuration
 public class LogbackConfig {
 
@@ -37,11 +49,20 @@ public class LogbackConfig {
         return new ApplicationContextHolder();
     }
 
+    /**
+     * 
+     * @return
+     */
     @Bean
     public LoggerContext loggerContext() {
         return (LoggerContext) LoggerFactory.getILoggerFactory();
     }
 
+    /**
+     * 
+     * @param ctx
+     * @return
+     */
     @Bean(initMethod = "start", destroyMethod = "stop")
     public PatternLayoutEncoder encoder(LoggerContext ctx) {
         PatternLayoutEncoder encoder = new PatternLayoutEncoder();
@@ -50,6 +71,12 @@ public class LogbackConfig {
         return encoder;
     }
 
+    /**
+     * 
+     * @param ctx
+     * @param encoder
+     * @return
+     */
     @Bean(initMethod = "start", destroyMethod = "stop")
     public ConsoleAppender consoleAppender(LoggerContext ctx, PatternLayoutEncoder encoder) {
         ConsoleAppender appender = new ConsoleAppender();
@@ -61,6 +88,12 @@ public class LogbackConfig {
         return appender;
     }
 
+    /**
+     * 
+     * @param ctx
+     * @param encoder
+     * @return
+     */
     @Bean(initMethod = "start", destroyMethod = "stop")
     public RollingFileAppender rollingFileAppender(LoggerContext ctx, PatternLayoutEncoder encoder) {
         RollingFileAppender appender = new RollingFileAppender();

@@ -21,15 +21,15 @@ import edu.tamu.framework.config.CoreWebConfigSupport;
 @Configuration
 public class AppWebConfigSupport extends CoreWebConfigSupport {
 
-	@Autowired
-	private AppRestInterceptor appRestInterceptor;
+    @Autowired
+    private AppRestInterceptor appRestInterceptor;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object getRestInterceptor() {
-		return appRestInterceptor;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object getRestInterceptor() {
+        return appRestInterceptor;
+    }
 
 }

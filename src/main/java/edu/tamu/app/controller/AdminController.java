@@ -30,23 +30,23 @@ import edu.tamu.framework.model.ApiResponse;
 @MessageMapping("/admin")
 public class AdminController {
 
-	/**
-	 * Websocket endpoint to request to broadcast message.
-	 * 
-	 * @param data
-	 *            String
-	 * @return ApiResponse
-	 * 
-	 * @throws Exception
-	 * 
-	 */
-	@MessageMapping("/broadcast")
-	@SendTo("/channel/admin/broadcast")
-	@Auth(role = "ROLE_ADMIN")
-	public ApiResponse broadcast(@Data String data) throws Exception {
-		Map<String, String> messageMap = new HashMap<String, String>();
-		messageMap.put("message", data);
-		return new ApiResponse(SUCCESS, messageMap);
-	}
+    /**
+     * Websocket endpoint to request to broadcast message.
+     * 
+     * @param data
+     *            String
+     * @return ApiResponse
+     * 
+     * @throws Exception
+     * 
+     */
+    @MessageMapping("/broadcast")
+    @SendTo("/channel/admin/broadcast")
+    @Auth(role = "ROLE_ADMIN")
+    public ApiResponse broadcast(@Data String data) throws Exception {
+        Map<String, String> messageMap = new HashMap<String, String>();
+        messageMap.put("message", data);
+        return new ApiResponse(SUCCESS, messageMap);
+    }
 
 }
