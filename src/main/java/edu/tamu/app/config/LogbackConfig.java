@@ -14,36 +14,35 @@ import ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy;
 import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
 import ch.qos.logback.ext.spring.ApplicationContextHolder;
 
-
 @Configuration
 public class LogbackConfig {
-	
-	@Value("${logging.encoder.pattern}")
-	private String encoderPattern;
-	
-	@Value("${logging.rolling.file}")
-	private String rollingFile;
-	
-	@Value("${logging.rolling.file}")
-	private String rollingPattern;
-	
-	@Value("${logging.rolling.file-size}")
-	private String rollingFileSize;
-	
-	@Value("${logging.rolling.threshold-level}")
-	private String rollingThresholdLevel;
 
-	@Bean 
+    @Value("${logging.encoder.pattern}")
+    private String encoderPattern;
+
+    @Value("${logging.rolling.file}")
+    private String rollingFile;
+
+    @Value("${logging.rolling.file}")
+    private String rollingPattern;
+
+    @Value("${logging.rolling.file-size}")
+    private String rollingFileSize;
+
+    @Value("${logging.rolling.threshold-level}")
+    private String rollingThresholdLevel;
+
+    @Bean
     public ApplicationContextHolder applicationContextHolder() {
-        return new ApplicationContextHolder ();
+        return new ApplicationContextHolder();
     }
 
-    @Bean 
+    @Bean
     public LoggerContext loggerContext() {
         return (LoggerContext) LoggerFactory.getILoggerFactory();
     }
 
-    @Bean (initMethod = "start", destroyMethod = "stop")
+    @Bean(initMethod = "start", destroyMethod = "stop")
     public PatternLayoutEncoder encoder(LoggerContext ctx) {
         PatternLayoutEncoder encoder = new PatternLayoutEncoder();
         encoder.setContext(ctx);
@@ -51,7 +50,7 @@ public class LogbackConfig {
         return encoder;
     }
 
-    @Bean (initMethod = "start", destroyMethod = "stop")
+    @Bean(initMethod = "start", destroyMethod = "stop")
     public ConsoleAppender consoleAppender(LoggerContext ctx, PatternLayoutEncoder encoder) {
         ConsoleAppender appender = new ConsoleAppender();
         appender.setContext(ctx);
@@ -60,19 +59,19 @@ public class LogbackConfig {
         thresholdFilter.setLevel("DEBUG");
         appender.addFilter(thresholdFilter);
         return appender;
-    }    
-    
-    @Bean (initMethod = "start", destroyMethod = "stop")
+    }
+
+    @Bean(initMethod = "start", destroyMethod = "stop")
     public RollingFileAppender rollingFileAppender(LoggerContext ctx, PatternLayoutEncoder encoder) {
-    	RollingFileAppender appender = new RollingFileAppender();
-    	appender.setFile(rollingFile);
+        RollingFileAppender appender = new RollingFileAppender();
+        appender.setFile(rollingFile);
         TimeBasedRollingPolicy rollingPolicy = new TimeBasedRollingPolicy();
-    	rollingPolicy.setParent(appender);
-    	rollingPolicy.setFileNamePattern(rollingPattern);
-    	appender.setRollingPolicy(rollingPolicy);
-    	SizeBasedTriggeringPolicy triggeringPolicy = new SizeBasedTriggeringPolicy();
-    	triggeringPolicy.setMaxFileSize(rollingFileSize);
-    	appender.setTriggeringPolicy(triggeringPolicy);
+        rollingPolicy.setParent(appender);
+        rollingPolicy.setFileNamePattern(rollingPattern);
+        appender.setRollingPolicy(rollingPolicy);
+        SizeBasedTriggeringPolicy triggeringPolicy = new SizeBasedTriggeringPolicy();
+        triggeringPolicy.setMaxFileSize(rollingFileSize);
+        appender.setTriggeringPolicy(triggeringPolicy);
         ThresholdFilter thresholdFilter = new ThresholdFilter();
         thresholdFilter.setLevel(rollingThresholdLevel);
         appender.addFilter(thresholdFilter);
@@ -80,5 +79,5 @@ public class LogbackConfig {
         appender.setEncoder(encoder);
         return appender;
     }
-    
+
 }
