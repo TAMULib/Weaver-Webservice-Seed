@@ -20,13 +20,10 @@ import edu.tamu.framework.model.ApiResponse;
 import edu.tamu.framework.model.CoreTheme;
 import edu.tamu.framework.model.repo.CoreThemeRepo;
 import edu.tamu.framework.service.ThemeManagerService;
-import edu.tamu.framework.util.HttpUtility;
 
 @Controller
 @ApiMapping("/theme")
 public class ThemeController {
-	@Autowired
-	private HttpUtility httpUtility;
 	
 	@Autowired
 	private ObjectMapper objectMapper;
