@@ -26,41 +26,46 @@ import edu.tamu.framework.aspect.annotation.Shib;
 import edu.tamu.framework.model.ApiResponse;
 import edu.tamu.framework.model.Credentials;
 
-/** 
+/**
  * User Controller
  * 
- * @author
- *
  */
 @Controller
 @ApiMapping("/user")
 public class UserController {
-	
-	@Autowired
-	private AppUserRepo userRepo;
 
-	/**
-	 * Websocket endpoint to request credentials.
-	 * 
-	 * @param 		shibObj			@Shib Object
-	 * 
-	 * @return		ApiResponse
-	 * 
-	 * @throws 		Exception
-	 * 
-	 */
-	@ApiMapping("/credentials")
-	@Auth
-	public ApiResponse credentials(@Shib Object shibObj) throws Exception {
-		return new ApiResponse(SUCCESS, (Credentials) shibObj);
-	}
-	
-	@ApiMapping("/all")
-	@Auth(role = "ROLE_MANAGER")
-	public ApiResponse allUsers() throws Exception {
-		Map<String,List<AppUser>> map = new HashMap<String,List<AppUser>>();
-		map.put("list", userRepo.findAll());		
-		return new ApiResponse(SUCCESS, map);
-	}
-	
+    @Autowired
+    private AppUserRepo userRepo;
+
+    /**
+     * Websocket endpoint to request credentials.
+     * 
+     * @param shibObj
+     *            Object
+     * 
+     * @return ApiResponse
+     * 
+     * @throws Exception
+     * 
+     */
+    @ApiMapping("/credentials")
+    @Auth
+    public ApiResponse credentials(@Shib Object shibObj) throws Exception {
+        return new ApiResponse(SUCCESS, (Credentials) shibObj);
+    }
+
+    /**
+     * Returns all users.
+     * 
+     * @return
+     * @throws Exception
+     */
+    @ApiMapping("/all")
+    @Auth(role = "ROLE_MANAGER")
+    public ApiResponse allUsers() throws Exception {
+        Map<String, List<AppUser>> map = new HashMap<String, List<AppUser>>();
+        map.put("list", userRepo.findAll());
+        return new ApiResponse(SUCCESS, map);
+    }
+
 }

@@ -1,5 +1,5 @@
 /* 
- * MyLibraryWebAppConfig.java 
+ * TamuWebserviceSeedWebAppConfig.java 
  * 
  * Version: 
  *     $Id$ 
@@ -20,38 +20,34 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import edu.tamu.app.controller.interceptor.AppRestInterceptor;
 import edu.tamu.framework.config.CoreWebAppConfig;
 
-/** 
- * Web MVC Configuration for application controller.
+/**
+ * TAMU Webservice Web App Configuration.
  * 
- * @author
- *
  */
 @Configuration
-@ComponentScan(basePackages = {"edu.tamu.app.config", "edu.tamu.app.controller"})
-@ConfigurationProperties(prefix="app.controller")
-@EnableJpaRepositories(basePackages={"edu.tamu.app.model.repo"})
-@EntityScan(basePackages={"edu.tamu.app.model"})
-public class TamuWebserviceSeedWebAppConfig extends CoreWebAppConfig {	
-	
-	/**
-	 * Rest interceptor bean.
-	 *
-	 * @return      RestInterceptor
-	 *
-	 */
-	@Bean
-	public AppRestInterceptor restInterceptor() {
-	    return new AppRestInterceptor();
-	}
+@ComponentScan(basePackages = { "edu.tamu.app.config", "edu.tamu.app.controller" })
+@ConfigurationProperties(prefix = "app.controller")
+@EnableJpaRepositories(basePackages = { "edu.tamu.app.model.repo" })
+@EntityScan(basePackages = { "edu.tamu.app.model" })
+public class TamuWebserviceSeedWebAppConfig extends CoreWebAppConfig {
 
-	/**
-	 * Add interceptor to interceptor registry.
-	 *
-	 * @param       registry	   InterceptorRegistry
-	 *
-	 */
-	@Override
-	public void addInterceptors(InterceptorRegistry registry) {
-	    registry.addInterceptor(restInterceptor()).addPathPatterns("/rest/**");
-	}
+    /**
+     * Rest interceptor bean.
+     *
+     * @return RestInterceptor
+     *
+     */
+    @Bean
+    public AppRestInterceptor restInterceptor() {
+        return new AppRestInterceptor();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(restInterceptor()).addPathPatterns("/**");
+    }
+
 }

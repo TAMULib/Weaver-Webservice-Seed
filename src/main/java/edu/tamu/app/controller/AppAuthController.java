@@ -1,3 +1,12 @@
+/* 
+ * AppAuthController.java 
+ * 
+ * Version: 
+ *     $Id$ 
+ * 
+ * Revisions: 
+ *     $Log$ 
+ */
 package edu.tamu.app.controller;
 
 import static edu.tamu.framework.enums.ApiResponseType.ERROR;
@@ -15,7 +24,6 @@ import java.util.concurrent.TimeUnit;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.mail.MessagingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,160 +40,171 @@ import edu.tamu.framework.aspect.annotation.Parameters;
 import edu.tamu.framework.controller.CoreAuthController;
 import edu.tamu.framework.model.ApiResponse;
 
+/**
+ * 
+ *
+ */
 @RestController
 @ApiMapping("/auth")
 public class AppAuthController extends CoreAuthController {
 
-	@Autowired
-	private AppUserRepo userRepo;
-	
-	@Value("${app.authority.admins}")
-	private String[] admins;
-	
-	@Value("${app.ui.host}")
-	private String uiHost;
-	
-	@Override
-	@ApiMapping(value = "/register", method = POST)
-	public ApiResponse registration(@Data String data, @Parameters Map<String, String[]> parameters) {
+    @Autowired
+    private AppUserRepo userRepo;
 
-		if (parameters.get("email") != null) {
+    @Value("${app.authority.admins}")
+    private String[] admins;
 
-			String email = parameters.get("email")[0];
+    @Value("${app.ui.host}")
+    private String uiHost;
 
-			if (userRepo.findByEmail(email) != null) {
-				logger.debug("Account with email " + email + " already exists!");
-				return new ApiResponse(ERROR, "Account with email " + email + " already exists!");
-			}
+    /**
+     * 
+     */
+    @Override
+    @ApiMapping(value = "/register", method = POST)
+    public ApiResponse registration(@Data String data, @Parameters Map<String, String[]> parameters) {
 
-			String subject = "Registration";
-			String content = "Email Verifiaction. Follow link to continue registration.\n\n";
+        if (parameters.get("email") != null) {
 
-			try {
-				content += uiHost + "/register?token=" + authUtility.generateToken(email, EMAIL_VERIFICATION_TYPE);
-			} catch (InvalidKeyException | NoSuchPaddingException | NoSuchAlgorithmException | IllegalBlockSizeException | BadPaddingException e1) {
-				logger.debug("Unable to generate token! " + email);
-				return new ApiResponse(ERROR, "Unable to generate token! " + email);
-			}
+            String email = parameters.get("email")[0];
 
-			try {
-				emailSender.sendEmail(email, subject, content);
-			} catch (Exception e) {
-				logger.debug("Unable to send email! " + email);
-				return new ApiResponse(ERROR, "Unable to send email! " + email);
-			}
+            if (userRepo.findByEmail(email) != null) {
+                logger.debug("Account with email " + email + " already exists!");
+                return new ApiResponse(ERROR, "Account with email " + email + " already exists!");
+            }
 
-			return new ApiResponse(SUCCESS, "An email has been sent to " + email + ". Please verify email to continue registration.", parameters);
-		}
+            String subject = "Registration";
+            String content = "Email Verifiaction. Follow link to continue registration.\n\n";
 
-		Map<String, String> dataMap = new HashMap<String, String>();
-		try {
-			dataMap = objectMapper.readValue(data, new TypeReference<HashMap<String, String>>() {
-			});
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+            try {
+                content += uiHost + "/register?token=" + authUtility.generateToken(email, EMAIL_VERIFICATION_TYPE);
+            } catch (InvalidKeyException | NoSuchPaddingException | NoSuchAlgorithmException | IllegalBlockSizeException | BadPaddingException e1) {
+                logger.debug("Unable to generate token! " + email);
+                return new ApiResponse(ERROR, "Unable to generate token! " + email);
+            }
 
-		String token = dataMap.get("token");
-		String firstName = dataMap.get("firstName");
-		String lastName = dataMap.get("lastName");
-		String password = dataMap.get("password");
-		String confirm = dataMap.get("confirm");
+            try {
+                emailSender.sendEmail(email, subject, content);
+            } catch (Exception e) {
+                logger.debug("Unable to send email! " + email);
+                return new ApiResponse(ERROR, "Unable to send email! " + email);
+            }
 
-		if ((firstName == null || firstName.trim().length() == 0) && (lastName == null || lastName.trim().length() == 0)) {
-			logger.debug("Either a first or last name is required!");
-			return new ApiResponse(ERROR, "Either a first or last name is required!");
-		}
+            return new ApiResponse(SUCCESS, "An email has been sent to " + email + ". Please verify email to continue registration.", parameters);
+        }
 
-		if (password == null || password.trim().length() == 0) {
-			logger.debug("Registration requires a password!");
-			return new ApiResponse(ERROR, "Registration requires a password!");
-		}
+        Map<String, String> dataMap = new HashMap<String, String>();
+        try {
+            dataMap = objectMapper.readValue(data, new TypeReference<HashMap<String, String>>() {
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-		if (password != null && !password.equals(confirm)) {
-			logger.debug("The passwords do not match!");
-			return new ApiResponse(ERROR, "The passwords do not match!");
-		}
+        String token = dataMap.get("token");
+        String firstName = dataMap.get("firstName");
+        String lastName = dataMap.get("lastName");
+        String password = dataMap.get("password");
+        String confirm = dataMap.get("confirm");
 
-		if (password != null && password.trim().length() < 6) {
-			logger.debug("Password must be greater than 6 characters!");
-			return new ApiResponse(ERROR, "Password must be greater than 6 characters!");
-		}
+        if ((firstName == null || firstName.trim().length() == 0) && (lastName == null || lastName.trim().length() == 0)) {
+            logger.debug("Either a first or last name is required!");
+            return new ApiResponse(ERROR, "Either a first or last name is required!");
+        }
 
-		String[] content = null;
-		try {
-			content = authUtility.validateToken(token, EMAIL_VERIFICATION_TYPE);
-		} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException e) {
-			logger.debug("Unable to validate token!");
-			return new ApiResponse(ERROR, "Unable to generate token!");
-		}
+        if (password == null || password.trim().length() == 0) {
+            logger.debug("Registration requires a password!");
+            return new ApiResponse(ERROR, "Registration requires a password!");
+        }
 
-		String tokenCreateTime = content[0];
-		String email = content[1];
+        if (password != null && !password.equals(confirm)) {
+            logger.debug("The passwords do not match!");
+            return new ApiResponse(ERROR, "The passwords do not match!");
+        }
 
-		Long tokenDaysOld = TimeUnit.MILLISECONDS.toDays(Long.valueOf(tokenCreateTime) - new Date().getTime());
+        if (password != null && password.trim().length() < 6) {
+            logger.debug("Password must be greater than 6 characters!");
+            return new ApiResponse(ERROR, "Password must be greater than 6 characters!");
+        }
 
-		if (tokenDaysOld >= 2) {
-			logger.debug("Token has expired!");
-			return new ApiResponse(ERROR, "Token has expired! Please begin registration again.");
-		}
+        String[] content = null;
+        try {
+            content = authUtility.validateToken(token, EMAIL_VERIFICATION_TYPE);
+        } catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException e) {
+            logger.debug("Unable to validate token!");
+            return new ApiResponse(ERROR, "Unable to generate token!");
+        }
 
-		AppUser user = userRepo.create(email, firstName, lastName, "ROLE_USER");
-		user.setPassword(authUtility.encodePassword(password));
-		
-		user.setRole("ROLE_USER");
+        String tokenCreateTime = content[0];
+        String email = content[1];
 
-		for (String admin : admins) {
-			if (admin.equals(user.getEmail())) {
-				user.setRole("ROLE_ADMIN");
-			}
-		}
-		
-		user = userRepo.save(user);
+        Long tokenDaysOld = TimeUnit.MILLISECONDS.toDays(Long.valueOf(tokenCreateTime) - new Date().getTime());
 
-		return new ApiResponse(SUCCESS, "Registration successful. Please login.", user);
-	}
+        if (tokenDaysOld >= 2) {
+            logger.debug("Token has expired!");
+            return new ApiResponse(ERROR, "Token has expired! Please begin registration again.");
+        }
 
-	@Override
-	@ApiMapping("/login")
-	public ApiResponse login(@Data String data) {
+        AppUser user = userRepo.create(email, firstName, lastName, "ROLE_USER");
+        user.setPassword(authUtility.encodePassword(password));
 
-		Map<String, String> dataMap = new HashMap<String, String>();
-		try {
-			dataMap = objectMapper.readValue(data, new TypeReference<HashMap<String, String>>() { });
-		} catch (Exception e) {
-			return new ApiResponse(ERROR, "Could not map input data!");
-		}
+        user.setRole("ROLE_USER");
 
-		String email = dataMap.get("email");
-		String password = dataMap.get("password");
+        for (String admin : admins) {
+            if (admin.equals(user.getEmail())) {
+                user.setRole("ROLE_ADMIN");
+            }
+        }
 
-		AppUser user = userRepo.findByEmail(email);
+        user = userRepo.save(user);
 
-		if (user == null) {
-			logger.debug("No user found with email " + email + "!");
-			return new ApiResponse(ERROR, "No user found with email " + email + "!");
-		}
+        return new ApiResponse(SUCCESS, "Registration successful. Please login.", user);
+    }
 
-		if (!authUtility.validatePassword(password, user.getPassword())) {
-			logger.debug("Authentication failed!");
-			return new ApiResponse(ERROR, "Authentication failed!");
-		}
+    /**
+     * 
+     */
+    @Override
+    @ApiMapping("/login")
+    public ApiResponse login(@Data String data) {
 
-		Map<String, String> payload = new HashMap<String, String>();
+        Map<String, String> dataMap = new HashMap<String, String>();
+        try {
+            dataMap = objectMapper.readValue(data, new TypeReference<HashMap<String, String>>() {
+            });
+        } catch (Exception e) {
+            return new ApiResponse(ERROR, "Could not map input data!");
+        }
 
-		payload.put("lastName", user.getLastName());
-		payload.put("firstName", user.getFirstName());
-		payload.put("netid", user.getNetid());
-		payload.put("uin", String.valueOf(user.getUin()));
-		payload.put("email", user.getEmail());
+        String email = dataMap.get("email");
+        String password = dataMap.get("password");
 
-		try {
-			return new ApiResponse(SUCCESS, jwtUtility.makeToken(payload));
-		} catch (InvalidKeyException | JsonProcessingException | NoSuchAlgorithmException | IllegalStateException | UnsupportedEncodingException e) {
-			logger.debug("Unable to generate token!");
-			return new ApiResponse(ERROR, "Unable to generate token!");
-		}
-	}
+        AppUser user = userRepo.findByEmail(email);
+
+        if (user == null) {
+            logger.debug("No user found with email " + email + "!");
+            return new ApiResponse(ERROR, "No user found with email " + email + "!");
+        }
+
+        if (!authUtility.validatePassword(password, user.getPassword())) {
+            logger.debug("Authentication failed!");
+            return new ApiResponse(ERROR, "Authentication failed!");
+        }
+
+        Map<String, String> payload = new HashMap<String, String>();
+
+        payload.put("lastName", user.getLastName());
+        payload.put("firstName", user.getFirstName());
+        payload.put("netid", user.getNetid());
+        payload.put("uin", String.valueOf(user.getUin()));
+        payload.put("email", user.getEmail());
+
+        try {
+            return new ApiResponse(SUCCESS, jwtUtility.makeToken(payload));
+        } catch (InvalidKeyException | JsonProcessingException | NoSuchAlgorithmException | IllegalStateException | UnsupportedEncodingException e) {
+            logger.debug("Unable to generate token!");
+            return new ApiResponse(ERROR, "Unable to generate token!");
+        }
+    }
 
 }

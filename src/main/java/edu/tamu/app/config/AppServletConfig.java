@@ -1,5 +1,5 @@
 /* 
- * ServletConfig.java 
+ * AppServletConfig.java 
  * 
  * Version: 
  *     $Id$ 
@@ -22,24 +22,31 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class AppServletConfig {
-	
-	/**
-	 * @return      ServletCustomizer
-	 */
-	@Bean
-	public EmbeddedServletContainerCustomizer containerCustomizer() {
-		return new ServletCustomizer();
-	}
-	
-	private static class ServletCustomizer implements EmbeddedServletContainerCustomizer {	
 
-		@Override
-		public void customize(ConfigurableEmbeddedServletContainer cesc) {
-			// An example on how to customize a servlet.
-			//MimeMappings mm = new MimeMappings(MimeMappings.DEFAULT);
-			//mm.add("png", "image/png");
-			//cesc.setMimeMappings(mm);
-		}		
-	}
+    /**
+     * @return ServletCustomizer
+     */
+    @Bean
+    public EmbeddedServletContainerCustomizer containerCustomizer() {
+        return new ServletCustomizer();
+    }
+
+    /**
+     * 
+     */
+    private static class ServletCustomizer implements EmbeddedServletContainerCustomizer {
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void customize(ConfigurableEmbeddedServletContainer cesc) {
+            // An example on how to customize a servlet.
+            // MimeMappings mm = new MimeMappings(MimeMappings.DEFAULT);
+            // mm.add("png", "image/png");
+            // cesc.setMimeMappings(mm);
+        }
+
+    }
+
 }
-

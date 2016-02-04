@@ -36,86 +36,80 @@ import edu.tamu.framework.model.Credentials;
 @Component
 public class AppStompInterceptor extends CoreStompInterceptor {
 
-	@Autowired
-	private AppUserRepo userRepo;
+    @Autowired
+    private AppUserRepo userRepo;
 
-	@Value("${app.authority.admins}")
-	private String[] admins;
-	
-	@Autowired @Lazy
-	private SimpMessagingTemplate simpMessagingTemplate;
+    @Value("${app.authority.admins}")
+    private String[] admins;
 
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    @Autowired
+    @Lazy
+    private SimpMessagingTemplate simpMessagingTemplate;
 
-	/**
-	 * @see edu.tamu.framework.interceptor.CoreStompInterceptor#confirmCreateUser(edu.tamu.framework.model.Credentials)
-	 * 
-	 * @param shib
-	 *            Credentials
-	 * 
-	 * @return shib
-	 * 
-	 */
-	@Override
-	public Credentials confirmCreateUser(Credentials shib) {
-		
-		AppUser user;
-		String adminTarget;
-		
-		if(shib.getUin().equals("null")) {
-			user = userRepo.findByEmail(shib.getEmail());
-			adminTarget = shib.getEmail();
-			
-			if(user == null) {
-				// do not create user
-				// return null for the core interceptor to return error to ui
-				return null;
-			}
-		}
-		else {
-			user = userRepo.findByUin(Long.parseLong(shib.getUin()));
-			adminTarget = shib.getUin();
-		}
-		
-		if (user == null) {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-			if (shib.getRole() == null) {
-				shib.setRole("ROLE_USER");
-			}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Credentials confirmCreateUser(Credentials shib) {
 
-			for (String uin : admins) {
-				if (uin.equals(adminTarget)) {
-					shib.setRole("ROLE_ADMIN");
-				}
-			}
+        AppUser user;
+        String adminTarget;
 
-			user = new AppUser();
+        if (shib.getUin().equals("null")) {
+            user = userRepo.findByEmail(shib.getEmail());
+            adminTarget = shib.getEmail();
 
-			if(!shib.getUin().equals("null")) {
-    			user.setUin(Long.parseLong(shib.getUin()));
-    		}
-    		
-			user.setRole(shib.getRole());
+            if (user == null) {
+                // do not create user
+                // return null for the core interceptor to return error to ui
+                return null;
+            }
+        } else {
+            user = userRepo.findByUin(Long.parseLong(shib.getUin()));
+            adminTarget = shib.getUin();
+        }
 
-			user.setFirstName(shib.getFirstName());
-			user.setLastName(shib.getLastName());
-			
-			user.setEmail(shib.getEmail());
+        if (user == null) {
 
-			user = userRepo.save(user);
+            if (shib.getRole() == null) {
+                shib.setRole("ROLE_USER");
+            }
 
-			logger.info("Created new user: " + shib.getFirstName() + " " + shib.getLastName() + ")");
-			
-			Map<String, Object> userMap = new HashMap<String, Object>();
-	           
-    		userMap.put("list", userRepo.findAll());
-           
-    		simpMessagingTemplate.convertAndSend("/channel/users", new ApiResponse(SUCCESS, userMap));
-		}
+            for (String uin : admins) {
+                if (uin.equals(adminTarget)) {
+                    shib.setRole("ROLE_ADMIN");
+                }
+            }
 
-		shib.setRole(user.getRole());
+            user = new AppUser();
 
-		return shib;
-	}
+            if (!shib.getUin().equals("null")) {
+                user.setUin(Long.parseLong(shib.getUin()));
+            }
+
+            user.setRole(shib.getRole());
+
+            user.setFirstName(shib.getFirstName());
+            user.setLastName(shib.getLastName());
+
+            user.setEmail(shib.getEmail());
+
+            user = userRepo.save(user);
+
+            logger.info("Created new user: " + shib.getFirstName() + " " + shib.getLastName() + ")");
+
+            Map<String, Object> userMap = new HashMap<String, Object>();
+
+            userMap.put("list", userRepo.findAll());
+
+            simpMessagingTemplate.convertAndSend("/channel/users", new ApiResponse(SUCCESS, userMap));
+        }
+
+        shib.setRole(user.getRole());
+
+        return shib;
+    }
 
 }
