@@ -5,4 +5,5 @@ target/
 .factorypath
 .project
 .settings
-/bin/
+bin/
+logs/
