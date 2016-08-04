@@ -116,7 +116,7 @@ public class ThemeController {
     public ApiResponse removeTheme(@Data String data) throws IOException {
         CoreTheme themeToRemove = objectMapper.treeToValue(objectMapper.readTree(data).get("theme"), CoreTheme.class);
         coreThemeRepo.delete(themeToRemove);
-        simpMessagingTemplate.convertAndSend("/channel/theme/removed", themeToRemove);
+        simpMessagingTemplate.convertAndSend("/channel/theme/removed", new ApiResponse(SUCCESS, "Theme removed", themeToRemove));
         return new ApiResponse(SUCCESS, "Theme removed", themeToRemove);
     }
 
