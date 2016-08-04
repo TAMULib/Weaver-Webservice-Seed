@@ -18,10 +18,13 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import edu.tamu.app.model.AppUser;
 import edu.tamu.app.model.repo.AppUserRepo;
 import edu.tamu.framework.aspect.annotation.ApiMapping;
 import edu.tamu.framework.aspect.annotation.Auth;
+import edu.tamu.framework.aspect.annotation.Data;
 import edu.tamu.framework.aspect.annotation.Shib;
 import edu.tamu.framework.model.ApiResponse;
 import edu.tamu.framework.model.Credentials;
@@ -36,6 +39,9 @@ public class UserController {
 
     @Autowired
     private AppUserRepo userRepo;
+    
+    @Autowired
+    private ObjectMapper objectMapper;
 
     /**
      * Websocket endpoint to request credentials.
@@ -66,6 +72,22 @@ public class UserController {
         Map<String, List<AppUser>> map = new HashMap<String, List<AppUser>>();
         map.put("list", userRepo.findAll());
         return new ApiResponse(SUCCESS, map);
+    }
+    
+    /**
+     * Returns all users.
+     * 
+     * @return
+     * @throws Exception
+     */
+    @ApiMapping("/update-role")
+    @Auth(role = "ROLE_MANAGER")
+    public ApiResponse updateUserRole(@Data String data) throws Exception {
+        Long uin = objectMapper.readTree(data).get("uin").asLong();
+        String role = objectMapper.readTree(data).get("role").asText();
+        AppUser user = userRepo.findByUin(uin);
+        user.setRole(role);
+        return new ApiResponse(SUCCESS, userRepo.save(user));
     }
 
 }
