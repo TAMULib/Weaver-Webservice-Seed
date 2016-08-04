@@ -74,7 +74,7 @@ public class ThemeController {
         Long propertyId = objectMapper.readTree(data).get("propertyId").asLong();
         String value = objectMapper.readTree(data).get("value").asText();
         themeManagerService.updateThemeProperty(themeId, propertyId, value);
-
+        simpMessagingTemplate.convertAndSend("/channel/theme", new ApiResponse(SUCCESS, coreThemeRepo.findOne(themeId)));
         return new ApiResponse(SUCCESS, "Theme updated", themeManagerService.getCurrentTheme());
     }
 
@@ -87,11 +87,37 @@ public class ThemeController {
     @ApiMapping("/add-theme")
     @Auth(role = "ROLE_ADMIN")
     public ApiResponse addTheme(@Data String data) throws IOException {
-        String themeName = objectMapper.readTree(data).get("newTheme").get("name").asText();
-        CoreTheme newTheme = coreThemeRepo.create(themeName);
-        simpMessagingTemplate.convertAndSend("/channel/theme/", new ApiResponse(SUCCESS, newTheme));
-
-        return new ApiResponse(SUCCESS, "Theme added", newTheme);
+        CoreTheme newTheme = objectMapper.treeToValue(objectMapper.readTree(data).get("theme"), CoreTheme.class);
+        CoreTheme newThemeWithoutProperties = coreThemeRepo.create(newTheme.getName());
+        
+        newThemeWithoutProperties.getProperties().forEach(themeProperty -> {
+            
+            newTheme.getProperties().forEach(defaultThemeProperty -> {
+                if(themeProperty.getThemePropertyName().getName().equals(defaultThemeProperty.getThemePropertyName().getName())) {
+                    themeProperty.setValue(defaultThemeProperty.getValue());
+                }
+            });
+            
+        });
+        
+        CoreTheme newThemeWithProperties = coreThemeRepo.save(newThemeWithoutProperties);
+        simpMessagingTemplate.convertAndSend("/channel/theme", new ApiResponse(SUCCESS, newThemeWithProperties));
+        return new ApiResponse(SUCCESS, "Theme added", newThemeWithProperties);
+    }
+    
+    /**
+     * 
+     * @param data
+     * @return
+     * @throws IOException
+     */
+    @ApiMapping("/remove-theme")
+    @Auth(role = "ROLE_ADMIN")
+    public ApiResponse removeTheme(@Data String data) throws IOException {
+        CoreTheme themeToRemove = objectMapper.treeToValue(objectMapper.readTree(data).get("theme"), CoreTheme.class);
+        coreThemeRepo.delete(themeToRemove);
+        simpMessagingTemplate.convertAndSend("/channel/theme/removed", themeToRemove);
+        return new ApiResponse(SUCCESS, "Theme removed", themeToRemove);
     }
 
     /**
@@ -103,8 +129,9 @@ public class ThemeController {
     @ApiMapping("/activate-theme")
     @Auth(role = "ROLE_ADMIN")
     public ApiResponse activateTheme(@Data String data) throws IOException {
-        Long themeId = objectMapper.readTree(data).get("themeId").asLong();
-        themeManagerService.setCurrentTheme(coreThemeRepo.getById(themeId));
-        return new ApiResponse(SUCCESS, "Theme activated");
+        CoreTheme themeToActivate = objectMapper.treeToValue(objectMapper.readTree(data).get("theme"), CoreTheme.class);
+        themeManagerService.setCurrentTheme(themeToActivate);
+        simpMessagingTemplate.convertAndSend("/channel/theme", new ApiResponse(SUCCESS, themeToActivate));
+        return new ApiResponse(SUCCESS, "Theme activated", themeToActivate);
     }
 }
