@@ -22,10 +22,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.tamu.app.model.AppUser;
 import edu.tamu.app.model.repo.AppUserRepo;
+import edu.tamu.framework.aspect.annotation.ApiCredentials;
+import edu.tamu.framework.aspect.annotation.ApiData;
 import edu.tamu.framework.aspect.annotation.ApiMapping;
 import edu.tamu.framework.aspect.annotation.Auth;
-import edu.tamu.framework.aspect.annotation.Data;
-import edu.tamu.framework.aspect.annotation.Shib;
+import edu.tamu.framework.enums.CoreRole;
 import edu.tamu.framework.model.ApiResponse;
 import edu.tamu.framework.model.Credentials;
 
@@ -55,9 +56,9 @@ public class UserController {
      * 
      */
     @ApiMapping("/credentials")
-    @Auth
-    public ApiResponse credentials(@Shib Object shibObj) throws Exception {
-        return new ApiResponse(SUCCESS, (Credentials) shibObj);
+    @Auth(role = "ROLE_USER")
+    public ApiResponse credentials(@ApiCredentials Credentials credentials) throws Exception {
+        return new ApiResponse(SUCCESS, credentials);
     }
 
     /**
@@ -82,11 +83,11 @@ public class UserController {
      */
     @ApiMapping("/update-role")
     @Auth(role = "ROLE_MANAGER")
-    public ApiResponse updateUserRole(@Data String data) throws Exception {
+    public ApiResponse updateUserRole(@ApiData String data) throws Exception {
         Long uin = objectMapper.readTree(data).get("uin").asLong();
         String role = objectMapper.readTree(data).get("role").asText();
         AppUser user = userRepo.findByUin(uin);
-        user.setRole(role);
+        user.setRole(CoreRole.valueOf(role));
         return new ApiResponse(SUCCESS, userRepo.save(user));
     }
 

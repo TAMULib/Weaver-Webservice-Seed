@@ -14,6 +14,7 @@ import javax.persistence.Entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import edu.tamu.framework.enums.CoreRole;
 import edu.tamu.framework.model.AbstractCoreUserImpl;
 
 /**
@@ -70,7 +71,7 @@ public class AppUser extends AbstractCoreUserImpl {
         setEmail(email);
         setFirstName(firstName);
         setLastName(lastName);
-        setRole(role);
+        setRole(CoreRole.valueOf(role));
     }
 
     /**

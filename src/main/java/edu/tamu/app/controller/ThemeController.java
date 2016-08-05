@@ -22,9 +22,9 @@ import org.springframework.stereotype.Controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import edu.tamu.framework.aspect.annotation.ApiData;
 import edu.tamu.framework.aspect.annotation.ApiMapping;
 import edu.tamu.framework.aspect.annotation.Auth;
-import edu.tamu.framework.aspect.annotation.Data;
 import edu.tamu.framework.model.ApiResponse;
 import edu.tamu.framework.model.CoreTheme;
 import edu.tamu.framework.model.repo.CoreThemeRepo;
@@ -69,7 +69,7 @@ public class ThemeController {
      */
     @ApiMapping("/update-property")
     @Auth(role = "ROLE_ADMIN")
-    public ApiResponse updateProperty(@Data String data) throws IOException {
+    public ApiResponse updateProperty(@ApiData String data) throws IOException {
         Long themeId = objectMapper.readTree(data).get("themeId").asLong();
         Long propertyId = objectMapper.readTree(data).get("propertyId").asLong();
         String value = objectMapper.readTree(data).get("value").asText();
@@ -86,7 +86,7 @@ public class ThemeController {
      */
     @ApiMapping("/add-theme")
     @Auth(role = "ROLE_ADMIN")
-    public ApiResponse addTheme(@Data String data) throws IOException {
+    public ApiResponse addTheme(@ApiData String data) throws IOException {
         CoreTheme newTheme = objectMapper.treeToValue(objectMapper.readTree(data).get("theme"), CoreTheme.class);
         CoreTheme newThemeWithoutProperties = coreThemeRepo.create(newTheme.getName());
         
@@ -113,7 +113,7 @@ public class ThemeController {
      */
     @ApiMapping("/remove-theme")
     @Auth(role = "ROLE_ADMIN")
-    public ApiResponse removeTheme(@Data String data) throws IOException {
+    public ApiResponse removeTheme(@ApiData String data) throws IOException {
         CoreTheme themeToRemove = objectMapper.treeToValue(objectMapper.readTree(data).get("theme"), CoreTheme.class);
         coreThemeRepo.delete(themeToRemove);
         simpMessagingTemplate.convertAndSend("/channel/theme/removed", new ApiResponse(SUCCESS, "Theme removed", themeToRemove));
@@ -128,7 +128,7 @@ public class ThemeController {
      */
     @ApiMapping("/activate-theme")
     @Auth(role = "ROLE_ADMIN")
-    public ApiResponse activateTheme(@Data String data) throws IOException {
+    public ApiResponse activateTheme(@ApiData String data) throws IOException {
         CoreTheme themeToActivate = objectMapper.treeToValue(objectMapper.readTree(data).get("theme"), CoreTheme.class);
         themeManagerService.setCurrentTheme(themeToActivate);
         simpMessagingTemplate.convertAndSend("/channel/theme", new ApiResponse(SUCCESS, themeToActivate));

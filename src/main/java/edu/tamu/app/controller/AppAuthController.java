@@ -30,14 +30,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 
 import edu.tamu.app.model.AppUser;
 import edu.tamu.app.model.repo.AppUserRepo;
+import edu.tamu.framework.aspect.annotation.ApiData;
 import edu.tamu.framework.aspect.annotation.ApiMapping;
-import edu.tamu.framework.aspect.annotation.Data;
-import edu.tamu.framework.aspect.annotation.Parameters;
+import edu.tamu.framework.aspect.annotation.ApiParameters;
 import edu.tamu.framework.controller.CoreAuthController;
+import edu.tamu.framework.enums.CoreRole;
 import edu.tamu.framework.model.ApiResponse;
 
 /**
@@ -62,7 +62,7 @@ public class AppAuthController extends CoreAuthController {
      */
     @Override
     @ApiMapping(value = "/register", method = POST)
-    public ApiResponse registration(@Data String data, @Parameters Map<String, String[]> parameters) {
+    public ApiResponse registration(@ApiData Map<String, String> dataMap, @ApiParameters Map<String, String[]> parameters) {
 
         if (parameters.get("email") != null) {
 
@@ -91,14 +91,6 @@ public class AppAuthController extends CoreAuthController {
             }
 
             return new ApiResponse(SUCCESS, "An email has been sent to " + email + ". Please verify email to continue registration.", parameters);
-        }
-
-        Map<String, String> dataMap = new HashMap<String, String>();
-        try {
-            dataMap = objectMapper.readValue(data, new TypeReference<HashMap<String, String>>() {
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
         }
 
         String token = dataMap.get("token");
@@ -148,11 +140,11 @@ public class AppAuthController extends CoreAuthController {
         AppUser user = userRepo.create(email, firstName, lastName, "ROLE_USER");
         user.setPassword(authUtility.encodePassword(password));
 
-        user.setRole("ROLE_USER");
+        user.setRole(CoreRole.ROLE_USER);
 
         for (String admin : admins) {
             if (admin.equals(user.getEmail())) {
-                user.setRole("ROLE_ADMIN");
+                user.setRole(CoreRole.ROLE_ADMIN);
             }
         }
 
@@ -166,15 +158,7 @@ public class AppAuthController extends CoreAuthController {
      */
     @Override
     @ApiMapping("/login")
-    public ApiResponse login(@Data String data) {
-
-        Map<String, String> dataMap = new HashMap<String, String>();
-        try {
-            dataMap = objectMapper.readValue(data, new TypeReference<HashMap<String, String>>() {
-            });
-        } catch (Exception e) {
-            return new ApiResponse(ERROR, "Could not map input data!");
-        }
+    public ApiResponse login(@ApiData Map<String, String> dataMap) {
 
         String email = dataMap.get("email");
         String password = dataMap.get("password");
