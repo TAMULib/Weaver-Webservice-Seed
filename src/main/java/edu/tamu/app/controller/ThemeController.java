@@ -90,9 +90,9 @@ public class ThemeController {
         CoreTheme newTheme = objectMapper.treeToValue(objectMapper.readTree(data).get("theme"), CoreTheme.class);
         CoreTheme newThemeWithoutProperties = coreThemeRepo.create(newTheme.getName());
         
-        newThemeWithoutProperties.getProperties().forEach(themeProperty -> {
+        newThemeWithoutProperties.getThemeProperties().forEach(themeProperty -> {
             
-            newTheme.getProperties().forEach(defaultThemeProperty -> {
+            newTheme.getThemeProperties().forEach(defaultThemeProperty -> {
                 if(themeProperty.getThemePropertyName().getName().equals(defaultThemeProperty.getThemePropertyName().getName())) {
                     themeProperty.setValue(defaultThemeProperty.getValue());
                 }

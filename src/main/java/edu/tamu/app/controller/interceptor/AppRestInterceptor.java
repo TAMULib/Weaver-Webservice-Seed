@@ -22,6 +22,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
+import edu.tamu.app.enums.AppRole;
 import edu.tamu.app.model.AppUser;
 import edu.tamu.app.model.repo.AppUserRepo;
 import edu.tamu.framework.interceptor.CoreRestInterceptor;
@@ -47,6 +48,21 @@ public class AppRestInterceptor extends CoreRestInterceptor {
     private SimpMessagingTemplate simpMessagingTemplate;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    // TODO: move static values into config
+    @Override
+    public Credentials getAnonymousCredentials() {
+        Credentials anonymousCredentials = new Credentials();
+        anonymousCredentials.setAffiliation("NA");
+        anonymousCredentials.setLastName("Anonymous");
+        anonymousCredentials.setFirstName("Role");
+        anonymousCredentials.setNetid("anonymous-" + Math.round(Math.random() * 100000));
+        anonymousCredentials.setUin("000000000");
+        anonymousCredentials.setExp("1436982214754");
+        anonymousCredentials.setEmail("helpdesk@library.tamu.edu");
+        anonymousCredentials.setRole("NONE");
+        return anonymousCredentials;
+    }
 
     /**
      * {@inheritDoc}
@@ -89,7 +105,7 @@ public class AppRestInterceptor extends CoreRestInterceptor {
                 user.setUin(Long.parseLong(shib.getUin()));
             }
 
-            user.setRole(shib.getRole());
+            user.setRole(AppRole.valueOf(shib.getRole()));
 
             user.setFirstName(shib.getFirstName());
             user.setLastName(shib.getLastName());
@@ -106,7 +122,7 @@ public class AppRestInterceptor extends CoreRestInterceptor {
 
             simpMessagingTemplate.convertAndSend("/channel/users", new ApiResponse(SUCCESS, userMap));
         } else {
-            shib.setRole(user.getRole());
+            shib.setRole(user.getRole().toString());
         }
 
         return shib;

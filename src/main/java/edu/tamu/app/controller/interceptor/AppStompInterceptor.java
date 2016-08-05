@@ -22,6 +22,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
+import edu.tamu.app.enums.AppRole;
 import edu.tamu.app.model.AppUser;
 import edu.tamu.app.model.repo.AppUserRepo;
 import edu.tamu.framework.interceptor.CoreStompInterceptor;
@@ -48,18 +49,33 @@ public class AppStompInterceptor extends CoreStompInterceptor {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    // TODO: move static values into config
+    @Override
+    public Credentials getAnonymousCredentials() {
+        Credentials anonymousCredentials = new Credentials();
+        anonymousCredentials.setAffiliation("NA");
+        anonymousCredentials.setLastName("Anonymous");
+        anonymousCredentials.setFirstName("Role");
+        anonymousCredentials.setNetid("anonymous-" + Math.round(Math.random() * 100000));
+        anonymousCredentials.setUin("000000000");
+        anonymousCredentials.setExp("1436982214754");
+        anonymousCredentials.setEmail("helpdesk@library.tamu.edu");
+        anonymousCredentials.setRole("NONE");
+        return anonymousCredentials;
+    }
+
     /**
      * {@inheritDoc}
      */
     @Override
-    public Credentials confirmCreateUser(Credentials shib) {
+    public Credentials confirmCreateUser(Credentials credentials) {
 
         AppUser user;
         String adminTarget;
 
-        if (shib.getUin().equals("null")) {
-            user = userRepo.findByEmail(shib.getEmail());
-            adminTarget = shib.getEmail();
+        if (credentials.getUin().equals("null")) {
+            user = userRepo.findByEmail(credentials.getEmail());
+            adminTarget = credentials.getEmail();
 
             if (user == null) {
                 // do not create user
@@ -67,38 +83,38 @@ public class AppStompInterceptor extends CoreStompInterceptor {
                 return null;
             }
         } else {
-            user = userRepo.findByUin(Long.parseLong(shib.getUin()));
-            adminTarget = shib.getUin();
+            user = userRepo.findByUin(Long.parseLong(credentials.getUin()));
+            adminTarget = credentials.getUin();
         }
 
         if (user == null) {
 
-            if (shib.getRole() == null) {
-                shib.setRole("ROLE_USER");
+            if (credentials.getRole() == null) {
+                credentials.setRole("ROLE_USER");
             }
 
             for (String uin : admins) {
                 if (uin.equals(adminTarget)) {
-                    shib.setRole("ROLE_ADMIN");
+                    credentials.setRole("ROLE_ADMIN");
                 }
             }
 
             user = new AppUser();
 
-            if (!shib.getUin().equals("null")) {
-                user.setUin(Long.parseLong(shib.getUin()));
+            if (!credentials.getUin().equals("null")) {
+                user.setUin(Long.parseLong(credentials.getUin()));
             }
 
-            user.setRole(shib.getRole());
+            user.setRole(AppRole.valueOf(credentials.getRole()));
 
-            user.setFirstName(shib.getFirstName());
-            user.setLastName(shib.getLastName());
+            user.setFirstName(credentials.getFirstName());
+            user.setLastName(credentials.getLastName());
 
-            user.setEmail(shib.getEmail());
+            user.setEmail(credentials.getEmail());
 
             user = userRepo.save(user);
 
-            logger.info("Created new user: " + shib.getFirstName() + " " + shib.getLastName() + ")");
+            logger.info("Created new user: " + credentials.getFirstName() + " " + credentials.getLastName() + ")");
 
             Map<String, Object> userMap = new HashMap<String, Object>();
 
@@ -107,9 +123,9 @@ public class AppStompInterceptor extends CoreStompInterceptor {
             simpMessagingTemplate.convertAndSend("/channel/users", new ApiResponse(SUCCESS, userMap));
         }
 
-        shib.setRole(user.getRole());
+        credentials.setRole(user.getRole().toString());
 
-        return shib;
+        return credentials;
     }
 
 }
