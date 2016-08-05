@@ -13,9 +13,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import edu.tamu.framework.enums.CoreRole;
+import edu.tamu.app.enums.AppRole;
 import edu.tamu.framework.model.AbstractCoreUserImpl;
+import edu.tamu.framework.model.IRole;
 
 /**
  * Application User entity.
@@ -23,6 +26,9 @@ import edu.tamu.framework.model.AbstractCoreUserImpl;
  */
 @Entity
 public class AppUser extends AbstractCoreUserImpl {
+    
+    @Column(name = "role")
+    private AppRole role;
 
     @Column(nullable = true)
     private String netid;
@@ -68,10 +74,27 @@ public class AppUser extends AbstractCoreUserImpl {
      * 
      */
     public AppUser(String email, String firstName, String lastName, String role) {
+        super();
         setEmail(email);
         setFirstName(firstName);
         setLastName(lastName);
-        setRole(CoreRole.valueOf(role));
+        setRole(AppRole.valueOf(role));
+    }
+    
+    /**
+     * @return the role
+     */
+    @JsonDeserialize(as = AppRole.class)
+    public IRole getRole() {
+        return role;
+    }
+
+    /**
+     * @param role the role to set
+     */
+    @JsonSerialize(as = AppRole.class)
+    public void setRole(IRole role) {
+        this.role = (AppRole) role;
     }
 
     /**

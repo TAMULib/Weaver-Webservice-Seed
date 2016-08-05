@@ -75,7 +75,7 @@ public class UserController {
      */
     @ApiMapping("/update")
     @Auth(role = "ROLE_MANAGER")
-    public ApiResponse updateUserRole(@ApiModel AppUser user) throws Exception {        
+    public ApiResponse updateUser(@ApiModel AppUser user) throws Exception {        
         // get the persisted user for its encoded password        
         AppUser persistedUser = userRepo.findOne(user.getId());
         if(persistedUser != null) {
