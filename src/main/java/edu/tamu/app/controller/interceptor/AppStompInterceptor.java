@@ -22,7 +22,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
-import edu.tamu.app.enums.AppRole;
 import edu.tamu.app.model.AppUser;
 import edu.tamu.app.model.repo.AppUserRepo;
 import edu.tamu.framework.interceptor.CoreStompInterceptor;
@@ -60,7 +59,7 @@ public class AppStompInterceptor extends CoreStompInterceptor {
         anonymousCredentials.setUin("000000000");
         anonymousCredentials.setExp("1436982214754");
         anonymousCredentials.setEmail("helpdesk@library.tamu.edu");
-        anonymousCredentials.setRole("NONE");
+        anonymousCredentials.setRole("ROLE_ANONYMOUS");
         return anonymousCredentials;
     }
 
@@ -99,20 +98,12 @@ public class AppStompInterceptor extends CoreStompInterceptor {
                 }
             }
 
-            user = new AppUser();
+            user = userRepo.create(credentials.getEmail(), credentials.getFirstName(), credentials.getLastName(), credentials.getRole());
 
             if (!credentials.getUin().equals("null")) {
                 user.setUin(Long.parseLong(credentials.getUin()));
+                user = userRepo.save(user);
             }
-
-            user.setRole(AppRole.valueOf(credentials.getRole()));
-
-            user.setFirstName(credentials.getFirstName());
-            user.setLastName(credentials.getLastName());
-
-            user.setEmail(credentials.getEmail());
-
-            user = userRepo.save(user);
 
             logger.info("Created new user: " + credentials.getFirstName() + " " + credentials.getLastName() + ")");
 

@@ -11,22 +11,16 @@ package edu.tamu.app.controller;
 
 import static edu.tamu.framework.enums.ApiResponseType.SUCCESS;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.tamu.app.model.AppUser;
 import edu.tamu.app.model.repo.AppUserRepo;
 import edu.tamu.framework.aspect.annotation.ApiCredentials;
-import edu.tamu.framework.aspect.annotation.ApiData;
 import edu.tamu.framework.aspect.annotation.ApiMapping;
+import edu.tamu.framework.aspect.annotation.ApiModel;
 import edu.tamu.framework.aspect.annotation.Auth;
-import edu.tamu.framework.enums.CoreRole;
 import edu.tamu.framework.model.ApiResponse;
 import edu.tamu.framework.model.Credentials;
 
@@ -42,8 +36,8 @@ public class UserController {
     private AppUserRepo userRepo;
     
     @Autowired
-    private ObjectMapper objectMapper;
-
+    private SimpMessagingTemplate simpMessagingTemplate;
+    
     /**
      * Websocket endpoint to request credentials.
      * 
@@ -56,7 +50,7 @@ public class UserController {
      * 
      */
     @ApiMapping("/credentials")
-    @Auth(role = "ROLE_USER")
+    @Auth(role = "ROLE_ANONYMOUS")
     public ApiResponse credentials(@ApiCredentials Credentials credentials) throws Exception {
         return new ApiResponse(SUCCESS, credentials);
     }
@@ -70,9 +64,7 @@ public class UserController {
     @ApiMapping("/all")
     @Auth(role = "ROLE_MANAGER")
     public ApiResponse allUsers() throws Exception {
-        Map<String, List<AppUser>> map = new HashMap<String, List<AppUser>>();
-        map.put("list", userRepo.findAll());
-        return new ApiResponse(SUCCESS, map);
+        return new ApiResponse(SUCCESS,  userRepo.findAll());
     }
     
     /**
@@ -81,14 +73,20 @@ public class UserController {
      * @return
      * @throws Exception
      */
-    @ApiMapping("/update-role")
+    @ApiMapping("/update")
     @Auth(role = "ROLE_MANAGER")
-    public ApiResponse updateUserRole(@ApiData String data) throws Exception {
-        Long uin = objectMapper.readTree(data).get("uin").asLong();
-        String role = objectMapper.readTree(data).get("role").asText();
-        AppUser user = userRepo.findByUin(uin);
-        user.setRole(CoreRole.valueOf(role));
-        return new ApiResponse(SUCCESS, userRepo.save(user));
+    public ApiResponse updateUserRole(@ApiModel AppUser user) throws Exception {        
+        // get the persisted user for its encoded password        
+        AppUser persistedUser = userRepo.findOne(user.getId());
+        if(persistedUser != null) {
+            user.setPassword(persistedUser.getPassword());
+        }
+        
+        user = userRepo.save(user);
+        
+        simpMessagingTemplate.convertAndSend("/channel/user", new ApiResponse(SUCCESS, userRepo.findAll()));
+        
+        return new ApiResponse(SUCCESS, user);
     }
 
 }

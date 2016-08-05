@@ -11,6 +11,7 @@ package edu.tamu.app.controller;
 
 import static edu.tamu.framework.enums.ApiResponseType.ERROR;
 import static edu.tamu.framework.enums.ApiResponseType.SUCCESS;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.io.UnsupportedEncodingException;
@@ -39,6 +40,8 @@ import edu.tamu.framework.aspect.annotation.ApiParameters;
 import edu.tamu.framework.controller.CoreAuthController;
 import edu.tamu.framework.enums.CoreRole;
 import edu.tamu.framework.model.ApiResponse;
+import edu.tamu.framework.util.ValidationUtility;
+import edu.tamu.framework.validation.ValidationResults;
 
 /**
  * 
@@ -61,7 +64,7 @@ public class AppAuthController extends CoreAuthController {
      * 
      */
     @Override
-    @ApiMapping(value = "/register", method = POST)
+    @ApiMapping(value = "/register", method = { POST, GET })
     public ApiResponse registration(@ApiData Map<String, String> dataMap, @ApiParameters Map<String, String[]> parameters) {
 
         if (parameters.get("email") != null) {
@@ -70,6 +73,8 @@ public class AppAuthController extends CoreAuthController {
 
             if (userRepo.findByEmail(email) != null) {
                 logger.debug("Account with email " + email + " already exists!");
+                ValidationResults invalidEmail = new ValidationResults();
+                invalidEmail.addMessage(ValidationUtility.BUSINESS_MESSAGE_KEY, "verify", "Account with email " + email + " already exists!");
                 return new ApiResponse(ERROR, "Account with email " + email + " already exists!");
             }
 
@@ -157,8 +162,10 @@ public class AppAuthController extends CoreAuthController {
      * 
      */
     @Override
-    @ApiMapping("/login")
+    @ApiMapping(value = "/login", method = POST)
     public ApiResponse login(@ApiData Map<String, String> dataMap) {
+        
+        System.out.println(dataMap);
 
         String email = dataMap.get("email");
         String password = dataMap.get("password");
@@ -167,11 +174,15 @@ public class AppAuthController extends CoreAuthController {
 
         if (user == null) {
             logger.debug("No user found with email " + email + "!");
+            ValidationResults invalidEmail = new ValidationResults();
+            invalidEmail.addMessage(ValidationUtility.BUSINESS_MESSAGE_KEY, "login", "No user found with email " + email + "!");
             return new ApiResponse(ERROR, "No user found with email " + email + "!");
         }
 
         if (!authUtility.validatePassword(password, user.getPassword())) {
             logger.debug("Authentication failed!");
+            ValidationResults failedAuthenticationResults = new ValidationResults();
+            failedAuthenticationResults.addMessage(ValidationUtility.BUSINESS_MESSAGE_KEY, "login", "Authentication failed!");
             return new ApiResponse(ERROR, "Authentication failed!");
         }
 

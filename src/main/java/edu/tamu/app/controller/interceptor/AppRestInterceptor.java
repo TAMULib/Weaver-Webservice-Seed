@@ -22,7 +22,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
-import edu.tamu.app.enums.AppRole;
 import edu.tamu.app.model.AppUser;
 import edu.tamu.app.model.repo.AppUserRepo;
 import edu.tamu.framework.interceptor.CoreRestInterceptor;
@@ -60,7 +59,7 @@ public class AppRestInterceptor extends CoreRestInterceptor {
         anonymousCredentials.setUin("000000000");
         anonymousCredentials.setExp("1436982214754");
         anonymousCredentials.setEmail("helpdesk@library.tamu.edu");
-        anonymousCredentials.setRole("NONE");
+        anonymousCredentials.setRole("ROLE_ANONYMOUS");
         return anonymousCredentials;
     }
 
@@ -68,14 +67,14 @@ public class AppRestInterceptor extends CoreRestInterceptor {
      * {@inheritDoc}
      */
     @Override
-    public Credentials confirmCreateUser(Credentials shib) {
+    public Credentials confirmCreateUser(Credentials credentials) {
 
         AppUser user;
         String adminTarget;
 
-        if (shib.getUin().equals("null")) {
-            user = userRepo.findByEmail(shib.getEmail());
-            adminTarget = shib.getEmail();
+        if (credentials.getUin().equals("null")) {
+            user = userRepo.findByEmail(credentials.getEmail());
+            adminTarget = credentials.getEmail();
 
             if (user == null) {
                 // do not create user
@@ -83,38 +82,30 @@ public class AppRestInterceptor extends CoreRestInterceptor {
                 return null;
             }
         } else {
-            user = userRepo.findByUin(Long.parseLong(shib.getUin()));
-            adminTarget = shib.getUin();
+            user = userRepo.findByUin(Long.parseLong(credentials.getUin()));
+            adminTarget = credentials.getUin();
         }
 
         if (user == null) {
 
-            if (shib.getRole() == null) {
-                shib.setRole("ROLE_USER");
+            if (credentials.getRole() == null) {
+                credentials.setRole("ROLE_USER");
             }
 
             for (String uin : admins) {
                 if (uin.equals(adminTarget)) {
-                    shib.setRole("ROLE_ADMIN");
+                    credentials.setRole("ROLE_ADMIN");
                 }
             }
 
-            user = new AppUser();
+            user = userRepo.create(credentials.getEmail(), credentials.getFirstName(), credentials.getLastName(), credentials.getRole());
 
-            if (!shib.getUin().equals("null")) {
-                user.setUin(Long.parseLong(shib.getUin()));
+            if (!credentials.getUin().equals("null")) {
+                user.setUin(Long.parseLong(credentials.getUin()));
+                user = userRepo.save(user);
             }
 
-            user.setRole(AppRole.valueOf(shib.getRole()));
-
-            user.setFirstName(shib.getFirstName());
-            user.setLastName(shib.getLastName());
-
-            user.setEmail(shib.getEmail());
-
-            user = userRepo.save(user);
-
-            logger.info("Created new user: " + shib.getFirstName() + " " + shib.getLastName() + ")");
+            logger.info("Created new user: " + credentials.getFirstName() + " " + credentials.getLastName() + ")");
 
             Map<String, Object> userMap = new HashMap<String, Object>();
 
@@ -122,10 +113,10 @@ public class AppRestInterceptor extends CoreRestInterceptor {
 
             simpMessagingTemplate.convertAndSend("/channel/users", new ApiResponse(SUCCESS, userMap));
         } else {
-            shib.setRole(user.getRole().toString());
+            credentials.setRole(user.getRole().toString());
         }
 
-        return shib;
+        return credentials;
     }
 
 }
