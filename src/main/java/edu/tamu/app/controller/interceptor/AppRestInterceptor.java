@@ -34,7 +34,7 @@ import edu.tamu.framework.model.Credentials;
  *
  */
 @Component
-public class AppRestInterceptor extends CoreRestInterceptor {
+public class AppRestInterceptor extends CoreRestInterceptor<AppUser> {
 
     @Autowired
     private AppUserRepo userRepo;
@@ -67,7 +67,7 @@ public class AppRestInterceptor extends CoreRestInterceptor {
      * {@inheritDoc}
      */
     @Override
-    public Credentials confirmCreateUser(Credentials credentials) {
+    public AppUser confirmCreateUser(Credentials credentials) {
 
         AppUser user;
         String adminTarget;
@@ -82,7 +82,7 @@ public class AppRestInterceptor extends CoreRestInterceptor {
                 return null;
             }
         } else {
-            user = userRepo.findByUin(Long.parseLong(credentials.getUin()));
+            user = userRepo.findByUin(credentials.getUin());
             adminTarget = credentials.getUin();
         }
 
@@ -101,7 +101,7 @@ public class AppRestInterceptor extends CoreRestInterceptor {
             user = userRepo.create(credentials.getEmail(), credentials.getFirstName(), credentials.getLastName(), credentials.getRole());
 
             if (!credentials.getUin().equals("null")) {
-                user.setUin(Long.parseLong(credentials.getUin()));
+                user.setUin(credentials.getUin());
                 user = userRepo.save(user);
             }
 
@@ -116,7 +116,7 @@ public class AppRestInterceptor extends CoreRestInterceptor {
             credentials.setRole(user.getRole().toString());
         }
 
-        return credentials;
+        return user;
     }
 
 }

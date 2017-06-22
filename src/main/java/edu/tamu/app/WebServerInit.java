@@ -12,10 +12,8 @@ package edu.tamu.app;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.context.web.SpringBootServletInitializer;
+import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.ComponentScan;
-
-import edu.tamu.framework.CoreSpringBanner;
 
 /**
  * Web server initialization.
@@ -33,9 +31,7 @@ public class WebServerInit extends SpringBootServletInitializer {
      *
      */
     public static void main(String[] args) {
-        SpringApplication application = new SpringApplication(WebServerInit.class);
-        application.setBanner(new CoreSpringBanner());
-        application.run(args);
+        SpringApplication.run(WebServerInit.class, args);
     }
 
     /**
@@ -49,7 +45,6 @@ public class WebServerInit extends SpringBootServletInitializer {
      */
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        application.banner(new CoreSpringBanner());
         return application.sources(WebServerInit.class);
     }
 

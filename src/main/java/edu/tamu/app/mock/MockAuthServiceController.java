@@ -30,7 +30,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import edu.tamu.framework.model.jwt.JWT;
+import edu.tamu.framework.model.jwt.Jwt;
 
 /**
  * Mock Auth Service.
@@ -107,7 +107,7 @@ public class MockAuthServiceController {
      * 
      */
     @RequestMapping("/refresh")
-    public JWT refresh(@RequestParam() Map<String, String> params, @RequestHeader() Map<String, String> headers) throws InvalidKeyException, NoSuchAlgorithmException, IllegalStateException, UnsupportedEncodingException, JsonProcessingException {
+    public Jwt refresh(@RequestParam() Map<String, String> params, @RequestHeader() Map<String, String> headers) throws InvalidKeyException, NoSuchAlgorithmException, IllegalStateException, UnsupportedEncodingException, JsonProcessingException {
         return makeToken(params.get("mock"), headers);
     }
 
@@ -126,11 +126,11 @@ public class MockAuthServiceController {
      * @exception JsonProcessingException
      * 
      */
-    private JWT makeToken(String mockUser, Map<String, String> headers) throws InvalidKeyException, JsonProcessingException, NoSuchAlgorithmException, IllegalStateException, UnsupportedEncodingException {
+    private Jwt makeToken(String mockUser, Map<String, String> headers) throws InvalidKeyException, JsonProcessingException, NoSuchAlgorithmException, IllegalStateException, UnsupportedEncodingException {
 
         logger.info("Creating token for mock " + mockUser);
 
-        JWT token = new JWT(secret_key, expiration);
+        Jwt token = new Jwt(secret_key, expiration);
 
         if (mockUser.equals("assumed")) {
             for (String k : shibKeys) {

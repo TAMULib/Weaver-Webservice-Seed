@@ -1,23 +1,24 @@
 package edu.tamu.app.model.impl;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import edu.tamu.app.WebServerInit;
 import edu.tamu.framework.model.Credentials;
 
 @WebAppConfiguration
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = WebServerInit.class)
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = { WebServerInit.class })
 public class ShibTest {
 
 	private Map<String, String> aggieJackToken;
@@ -42,12 +43,12 @@ public class ShibTest {
 		
 		Credentials shib = new Credentials(aggieJackToken);
 		
-		Assert.assertEquals("Last name did not match.", "Daniels", shib.getLastName());
-		Assert.assertEquals("First name did not match.", "Jack", shib.getFirstName());
-		Assert.assertEquals("Netid did not match.", "aggiejack", shib.getNetid());
-		Assert.assertEquals("UIN did not match.", "123456789", shib.getUin());
-		Assert.assertEquals("Expiration did not match.", String.valueOf(timestamp), shib.getExp());
-		Assert.assertEquals("Email did not match.", "aggiejack@tamu.edu", shib.getEmail());
+		assertEquals("Last name did not match.", "Daniels", shib.getLastName());
+		assertEquals("First name did not match.", "Jack", shib.getFirstName());
+		assertEquals("Netid did not match.", "aggiejack", shib.getNetid());
+		assertEquals("UIN did not match.", "123456789", shib.getUin());
+		assertEquals("Expiration did not match.", String.valueOf(timestamp), shib.getExp());
+		assertEquals("Email did not match.", "aggiejack@tamu.edu", shib.getEmail());
 			
 	}
 	
