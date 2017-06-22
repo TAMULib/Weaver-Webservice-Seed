@@ -27,7 +27,7 @@ public class AppUserRepoImpl implements AppUserRepoCustom {
      * {@inheritDoc}
      */
     @Override
-    public AppUser create(Long uin) {
+    public AppUser create(String uin) {
         AppUser user = appUserRepo.findByUin(uin);
         if (user == null) {
             return appUserRepo.save(new AppUser(uin));

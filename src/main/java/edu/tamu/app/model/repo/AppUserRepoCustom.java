@@ -22,7 +22,7 @@ public interface AppUserRepoCustom {
      * @param uin
      *            Long
      */
-    public AppUser create(Long uin);
+    public AppUser create(String uin);
 
     public AppUser create(String email, String firstName, String lastName, String role);
 
