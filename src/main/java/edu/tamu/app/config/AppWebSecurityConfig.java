@@ -32,7 +32,7 @@ public class AppWebSecurityConfig extends AuthWebSecurityConfig<User, UserRepo, 
             .and()
                 .headers()
                     .frameOptions()
-                    .disable()
+                        .disable()
             .and()
                 .cors()
             .and()

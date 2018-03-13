@@ -50,7 +50,7 @@ public class UserController {
      */
     @RequestMapping("/all")
     @PreAuthorize("hasRole('MANAGER')")
-    public ApiResponse allUsers() throws Exception {
+    public ApiResponse allUsers() {
         return new ApiResponse(SUCCESS, userRepo.findAll());
     }
 
@@ -65,7 +65,7 @@ public class UserController {
      */
     @RequestMapping("/update")
     @PreAuthorize("hasRole('MANAGER')")
-    public ApiResponse updateUser(@RequestBody User user) throws Exception {
+    public ApiResponse updateUser(@RequestBody User user) {
         user = userRepo.update(user);
         return new ApiResponse(SUCCESS, user);
     }
