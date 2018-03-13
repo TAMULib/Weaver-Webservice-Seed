@@ -20,7 +20,7 @@ import org.springframework.context.annotation.ComponentScan;
  * 
  */
 @SpringBootApplication
-@ComponentScan(basePackages = { "edu.tamu.*", "wro.*" })
+@ComponentScan(basePackages = { "edu.tamu.*" })
 public class SeedApplication extends SpringBootServletInitializer {
 
     /**
