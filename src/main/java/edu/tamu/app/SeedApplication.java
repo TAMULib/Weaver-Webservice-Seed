@@ -19,9 +19,9 @@ import org.springframework.context.annotation.ComponentScan;
  * Web server initialization.
  * 
  */
-@ComponentScan(basePackages = { "edu.tamu.framework", "edu.tamu.app" })
 @SpringBootApplication
-public class WebServerInit extends SpringBootServletInitializer {
+@ComponentScan(basePackages = { "edu.tamu.*", "wro.*" })
+public class SeedApplication extends SpringBootServletInitializer {
 
     /**
      * Entry point to the application from within servlet.
@@ -31,7 +31,7 @@ public class WebServerInit extends SpringBootServletInitializer {
      *
      */
     public static void main(String[] args) {
-        SpringApplication.run(WebServerInit.class, args);
+        SpringApplication.run(SeedApplication.class, args);
     }
 
     /**
@@ -45,7 +45,7 @@ public class WebServerInit extends SpringBootServletInitializer {
      */
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        return application.sources(WebServerInit.class);
+        return application.sources(SeedApplication.class);
     }
 
 }

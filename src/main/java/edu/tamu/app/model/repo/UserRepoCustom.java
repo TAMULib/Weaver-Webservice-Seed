@@ -9,12 +9,12 @@
  */
 package edu.tamu.app.model.repo;
 
-import edu.tamu.app.model.AppUser;
+import edu.tamu.app.model.User;
 
 /**
  * 
  */
-public interface AppUserRepoCustom {
+public interface UserRepoCustom {
 
     /**
      * method to create user based on uin
@@ -22,8 +22,8 @@ public interface AppUserRepoCustom {
      * @param uin
      *            Long
      */
-    public AppUser create(String uin);
+    public User create(String uin);
 
-    public AppUser create(String email, String firstName, String lastName, String role);
+    public User create(String email, String firstName, String lastName, String role);
 
 }

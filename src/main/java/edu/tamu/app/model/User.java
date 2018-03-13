@@ -23,43 +23,33 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import edu.tamu.app.enums.AppRole;
-import edu.tamu.framework.model.AbstractCoreUser;
-import edu.tamu.framework.model.IRole;
+import edu.tamu.app.model.User;
+import edu.tamu.weaver.auth.model.AbstractWeaverUserDetails;
+import edu.tamu.weaver.user.model.IRole;
 
 /**
  * Application User entity.
  * 
  */
 @Entity
-public class AppUser extends AbstractCoreUser {
+public class User extends AbstractWeaverUserDetails {
     
     private static final long serialVersionUID = -4974106399870286015L;
     
     @Column(name = "role")
     private AppRole role;
 
-    @Column(nullable = true)
-    private String netid;
-
-    @Column(nullable = true, unique = true)
-    private String email;
-
-    // encoded password
-    @JsonIgnore
-    @Column(nullable = true)
-    private String password;
-
-    @Column(nullable = true)
+    @Column(name = "first_name")
     private String firstName;
 
-    @Column(nullable = true)
+    @Column(name = "last_name")
     private String lastName;
 
     /**
      * Constructor for the application user
      * 
      */
-    public AppUser() {
+    public User() {
         super();
     }
 
@@ -70,8 +60,8 @@ public class AppUser extends AbstractCoreUser {
      *            String
      * 
      */
-    public AppUser(String uin) {
-        super(uin);
+    public User(String uin) {
+        setUsername(uin);
     }
 
     /**
@@ -81,12 +71,18 @@ public class AppUser extends AbstractCoreUser {
      *            Long
      * 
      */
-    public AppUser(String email, String firstName, String lastName, String role) {
-        super();
-        setEmail(email);
+    public User(String uin, String firstName, String lastName, String role) {
+        this(uin);
         setFirstName(firstName);
         setLastName(lastName);
         setRole(AppRole.valueOf(role));
+    }
+    
+    public User(User user) {
+        this(user.getUsername());
+        setFirstName(user.getFirstName());
+        setLastName(user.getLastName());
+        setRole(user.getRole());
     }
     
     /**
@@ -103,51 +99,6 @@ public class AppUser extends AbstractCoreUser {
     @JsonSerialize(as = AppRole.class)
     public void setRole(IRole role) {
         this.role = (AppRole) role;
-    }
-
-    /**
-     * @return the netid
-     */
-    public String getNetid() {
-        return netid;
-    }
-
-    /**
-     * @param netid
-     *            the netid to set
-     */
-    public void setNetid(String netid) {
-        this.netid = netid;
-    }
-
-    /**
-     * @return the email
-     */
-    public String getEmail() {
-        return email;
-    }
-
-    /**
-     * @param email
-     *            the email to set
-     */
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    /**
-     * @return the password
-     */
-    public String getPassword() {
-        return password;
-    }
-
-    /**
-     * @param password
-     *            the password to set
-     */
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     /**
@@ -184,37 +135,7 @@ public class AppUser extends AbstractCoreUser {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
-    
-    @Override
-    @JsonIgnore
-    public boolean isAccountNonExpired() {
-        return false;
-    }
-    
-    @Override
-    @JsonIgnore
-    public boolean isAccountNonLocked() {
-        return false;
-    }
-    
-    @Override
-    @JsonIgnore
-    public boolean isCredentialsNonExpired() {
-        return false;
-    }
-    
-    @Override
-    @JsonIgnore
-    public String getUsername() {
-        return getUin();
-    }
-    
-    @Override
-    @JsonIgnore
-    public boolean isEnabled() {
-        return true;
-    }
-    
+
     @Override
     @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -223,5 +144,10 @@ public class AppUser extends AbstractCoreUser {
         authorities.add(authority);
         return authorities;
     }
-
+    
+    @Override
+    @JsonIgnore
+    public String getPassword() {
+        return null;
+    }
 }
