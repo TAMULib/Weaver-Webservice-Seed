@@ -1,27 +1,17 @@
-/* 
- * Roles.java 
- * 
- * Version: 
- *     $Id$ 
- * 
- * Revisions: 
- *     $Log$ 
- */
 package edu.tamu.app.enums;
 
 import edu.tamu.weaver.user.model.IRole;
 
-public enum AppRole implements IRole {
+public enum Role implements IRole {
 
     ROLE_ANONYMOUS(0), 
     ROLE_USER(1), 
-    ROLE_ANNOTATOR(2), 
-    ROLE_MANAGER(3), 
-    ROLE_ADMIN(4);
+    ROLE_MANAGER(2), 
+    ROLE_ADMIN(3);
 
     private int value;
 
-    AppRole(int value) {
+    Role(int value) {
         this.value = value;
     }
 

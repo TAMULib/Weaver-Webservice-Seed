@@ -1,13 +1,10 @@
 package edu.tamu.app.config;
 
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import org.h2.server.web.WebServlet;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +13,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.mail.javamail.ConfigurableMimeFileTypeMap;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.resource.ResourceUrlEncodingFilter;
@@ -31,6 +29,9 @@ import edu.tamu.weaver.validation.resolver.WeaverValidatedModelMethodProcessor;
 @EntityScan(basePackages = { "edu.tamu.app.model", "edu.tamu.weaver.wro.model" })
 @EnableJpaRepositories(basePackages = { "edu.tamu.app.model.repo", "edu.tamu.weaver.wro.model.repo" })
 public class AppWebMvcConfig extends WebMvcConfigurerAdapter {
+
+    @Value("${app.security.allow-access}")
+    private String[] hosts;
 
     @Autowired
     private List<HttpMessageConverter<?>> converters;
@@ -56,16 +57,16 @@ public class AppWebMvcConfig extends WebMvcConfigurerAdapter {
         return new ConfigurableMimeFileTypeMap();
     }
 
-    /**
-     * Executor Service configuration.
-     * 
-     * @return ExecutorSevice
-     * 
-     */
-    @Bean(name = "executorService")
-    private static ExecutorService configureExecutorService() {
-        ExecutorService executorService = new ThreadPoolExecutor(10, 25, 0L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(25));
-        return executorService;
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        // @formatter:off
+        registry.addMapping("/**")
+                .allowedOrigins(hosts)
+                .allowCredentials(false)
+                .allowedMethods("GET", "DELETE", "PUT", "POST")
+                .allowedHeaders("Origin", "Content-Type", "Access-Control-Allow-Origin", "x-requested-with", "jwt", "data", "x-forwarded-for")
+                .exposedHeaders("jwt");
+        // @formatter:on
     }
 
     @Override

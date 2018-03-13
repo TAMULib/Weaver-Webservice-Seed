@@ -7,8 +7,8 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
-import edu.tamu.app.auth.service.UserDetailsService;
-import edu.tamu.app.enums.AppRole;
+import edu.tamu.app.auth.service.AppUserDetailsService;
+import edu.tamu.app.enums.Role;
 import edu.tamu.app.model.User;
 import edu.tamu.app.model.repo.UserRepo;
 import edu.tamu.weaver.auth.config.AuthWebSecurityConfig;
@@ -16,7 +16,7 @@ import edu.tamu.weaver.auth.config.AuthWebSecurityConfig;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
-public class AppWebSecurityConfig extends AuthWebSecurityConfig<User, UserRepo, UserDetailsService> {
+public class AppWebSecurityConfig extends AuthWebSecurityConfig<User, UserRepo, AppUserDetailsService> {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -34,6 +34,8 @@ public class AppWebSecurityConfig extends AuthWebSecurityConfig<User, UserRepo, 
                     .frameOptions()
                     .disable()
             .and()
+                .cors()
+            .and()
                 .csrf()
                     .disable()
             .addFilter(tokenAuthorizationFilter());
@@ -43,7 +45,7 @@ public class AppWebSecurityConfig extends AuthWebSecurityConfig<User, UserRepo, 
     @Override
     protected String buildRoleHierarchy() {
         StringBuilder roleHeirarchy = new StringBuilder();
-        AppRole[] roles = AppRole.values();
+        Role[] roles = Role.values();
         for (int i = 0; i <= roles.length - 2; i++) {
             roleHeirarchy.append(roles[i] + " > " + roles[i + 1]);
             if (i < roles.length - 2) {

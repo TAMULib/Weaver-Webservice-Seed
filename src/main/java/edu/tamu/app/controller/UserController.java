@@ -1,21 +1,12 @@
-/* 
- * UserController.java 
- * 
- * Version: 
- *     $Id$ 
- * 
- * Revisions: 
- *     $Log$ 
- */
 package edu.tamu.app.controller;
 
 import static edu.tamu.weaver.response.ApiStatus.SUCCESS;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import edu.tamu.app.model.User;
 import edu.tamu.app.model.repo.UserRepo;
@@ -27,13 +18,13 @@ import edu.tamu.weaver.response.ApiResponse;
  * User Controller
  * 
  */
-@Controller
+@RestController
 @RequestMapping("/user")
 public class UserController {
 
     @Autowired
     private UserRepo userRepo;
-    
+
     /**
      * Websocket endpoint to request credentials.
      * 
@@ -60,9 +51,9 @@ public class UserController {
     @RequestMapping("/all")
     @PreAuthorize("hasRole('MANAGER')")
     public ApiResponse allUsers() throws Exception {
-        return new ApiResponse(SUCCESS,  userRepo.findAll());
+        return new ApiResponse(SUCCESS, userRepo.findAll());
     }
-    
+
     /**
      * Returns users.
      * 
@@ -74,11 +65,11 @@ public class UserController {
      */
     @RequestMapping("/update")
     @PreAuthorize("hasRole('MANAGER')")
-    public ApiResponse updateUser(@RequestBody User user) throws Exception {              
-        user = userRepo.update(user);        
+    public ApiResponse updateUser(@RequestBody User user) throws Exception {
+        user = userRepo.update(user);
         return new ApiResponse(SUCCESS, user);
     }
-    
+
     /**
      * Endpoint to delete user.
      * 

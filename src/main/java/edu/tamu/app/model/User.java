@@ -1,12 +1,3 @@
-/* 
- * AppUser.java 
- * 
- * Version: 
- *     $Id$ 
- * 
- * Revisions: 
- *     $Log$ 
- */
 package edu.tamu.app.model;
 
 import java.util.ArrayList;
@@ -22,8 +13,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import edu.tamu.app.enums.AppRole;
-import edu.tamu.app.model.User;
+import edu.tamu.app.enums.Role;
 import edu.tamu.weaver.auth.model.AbstractWeaverUserDetails;
 import edu.tamu.weaver.user.model.IRole;
 
@@ -33,16 +23,19 @@ import edu.tamu.weaver.user.model.IRole;
  */
 @Entity
 public class User extends AbstractWeaverUserDetails {
-    
-    private static final long serialVersionUID = -4974106399870286015L;
-    
-    @Column(name = "role")
-    private AppRole role;
 
-    @Column(name = "first_name")
+    private static final long serialVersionUID = -4974106399870286015L;
+
+    @Column(nullable = false)
+    private Role role;
+
+    @Column(nullable = false)
+    private String email;
+
+    @Column(nullable = false)
     private String firstName;
 
-    @Column(name = "last_name")
+    @Column(nullable = false)
     private String lastName;
 
     /**
@@ -61,6 +54,7 @@ public class User extends AbstractWeaverUserDetails {
      * 
      */
     public User(String uin) {
+        this();
         setUsername(uin);
     }
 
@@ -71,34 +65,57 @@ public class User extends AbstractWeaverUserDetails {
      *            Long
      * 
      */
-    public User(String uin, String firstName, String lastName, String role) {
+    public User(String uin, String email, String firstName, String lastName, Role role) {
         this(uin);
+        setEmail(email);
         setFirstName(firstName);
         setLastName(lastName);
-        setRole(AppRole.valueOf(role));
+        setRole(role);
     }
-    
+
+    /**
+     * 
+     * @param user
+     */
     public User(User user) {
         this(user.getUsername());
+        setEmail(user.getEmail());
         setFirstName(user.getFirstName());
         setLastName(user.getLastName());
         setRole(user.getRole());
     }
-    
+
     /**
      * @return the role
      */
-    @JsonDeserialize(as = AppRole.class)
+    @JsonDeserialize(as = Role.class)
     public IRole getRole() {
         return role;
     }
 
     /**
-     * @param role the role to set
+     * @param role
+     *            the role to set
      */
-    @JsonSerialize(as = AppRole.class)
+    @JsonSerialize(as = Role.class)
     public void setRole(IRole role) {
-        this.role = (AppRole) role;
+        this.role = (Role) role;
+    }
+
+    /**
+     * 
+     * @return
+     */
+    public String getEmail() {
+        return email;
+    }
+
+    /**
+     * 
+     * @param email
+     */
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     /**
@@ -138,16 +155,41 @@ public class User extends AbstractWeaverUserDetails {
 
     @Override
     @JsonIgnore
+    public boolean isAccountNonExpired() {
+        return false;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isAccountNonLocked() {
+        return false;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isCredentialsNonExpired() {
+        return false;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isEnabled() {
+        return true;
+    }
+
+    @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority(this.getRole().toString());
         authorities.add(authority);
         return authorities;
     }
-    
+
     @Override
     @JsonIgnore
     public String getPassword() {
         return null;
     }
+
 }

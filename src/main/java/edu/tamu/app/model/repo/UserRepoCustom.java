@@ -1,29 +1,10 @@
-/* 
- * AppUserRepoCustom.java 
- * 
- * Version: 
- *     $Id$ 
- * 
- * Revisions: 
- *     $Log$ 
- */
 package edu.tamu.app.model.repo;
 
+import edu.tamu.app.enums.Role;
 import edu.tamu.app.model.User;
 
-/**
- * 
- */
 public interface UserRepoCustom {
 
-    /**
-     * method to create user based on uin
-     * 
-     * @param uin
-     *            Long
-     */
-    public User create(String uin);
-
-    public User create(String email, String firstName, String lastName, String role);
+    public User create(String uin, String email, String firstName, String lastName, Role role);
 
 }

@@ -9,7 +9,7 @@ import edu.tamu.app.model.repo.UserRepo;
 import edu.tamu.weaver.auth.service.AbstractWeaverUserDetailsService;
 
 @Service
-public class UserDetailsService extends AbstractWeaverUserDetailsService<User, UserRepo> {
+public class AppUserDetailsService extends AbstractWeaverUserDetailsService<User, UserRepo> {
 
     @Override
     public UserDetails buildUserDetails(User user) {
