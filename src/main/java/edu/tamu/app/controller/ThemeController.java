@@ -1,110 +1,116 @@
-/* 
- * ThemeController.java 
- * 
- * Version: 
- *     $Id$ 
- * 
- * Revisions: 
- *     $Log$ 
+/*
+ * ThemeController.java
+ *
+ * Version:
+ *     $Id$
+ *
+ * Revisions:
+ *     $Log$
  */
 package edu.tamu.app.controller;
 
-import static edu.tamu.framework.enums.ApiResponseType.SUCCESS;
+import static edu.tamu.weaver.response.ApiStatus.SUCCESS;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
 
-import edu.tamu.framework.aspect.annotation.ApiMapping;
-import edu.tamu.framework.aspect.annotation.Auth;
-import edu.tamu.framework.aspect.annotation.Data;
-import edu.tamu.framework.model.ApiResponse;
-import edu.tamu.framework.model.CoreTheme;
-import edu.tamu.framework.model.repo.CoreThemeRepo;
-import edu.tamu.framework.service.ThemeManagerService;
+import edu.tamu.weaver.response.ApiResponse;
+import edu.tamu.weaver.wro.model.CoreTheme;
+import edu.tamu.weaver.wro.model.repo.CoreThemeRepo;
+import edu.tamu.weaver.wro.service.RepoThemeManager;
+
 
 /**
- * 
+ *
  */
-@Controller
-@ApiMapping("/theme")
+@RestController
+@RequestMapping("/theme")
 public class ThemeController {
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
-    private SimpMessagingTemplate simpMessagingTemplate;
 
     @Autowired
     private CoreThemeRepo coreThemeRepo;
 
     @Autowired
-    private ThemeManagerService themeManagerService;
+    private RepoThemeManager themeManagerService;
+
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     /**
-     * 
+     *
      * @return
      */
-    @ApiMapping("/all")
-    @Auth(role = "ROLE_ADMIN")
+    @RequestMapping("/all")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse getAll() {
-        Map<String, List<CoreTheme>> coreThemes = new HashMap<String, List<CoreTheme>>();
-        coreThemes.put("list", coreThemeRepo.findAll());
-        return new ApiResponse(SUCCESS, coreThemes);
+        return new ApiResponse(SUCCESS, coreThemeRepo.findAll());
     }
 
     /**
-     * 
+     *
      * @param data
      * @return
      * @throws IOException
      */
-    @ApiMapping("/update-property")
-    @Auth(role = "ROLE_ADMIN")
-    public ApiResponse updateProperty(@Data String data) throws IOException {
-        Long themeId = objectMapper.readTree(data).get("themeId").asLong();
-        Long propertyId = objectMapper.readTree(data).get("propertyId").asLong();
-        String value = objectMapper.readTree(data).get("value").asText();
+    @RequestMapping("/update-property")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse updateProperty(@RequestBody JsonNode dataNode) throws IOException {
+        Long themeId = dataNode.get("themeId").asLong();
+        Long propertyId = dataNode.get("propertyId").asLong();
+        String value = dataNode.get("value").asText();
         themeManagerService.updateThemeProperty(themeId, propertyId, value);
-
-        return new ApiResponse(SUCCESS, "Theme updated", themeManagerService.getCurrentTheme());
+        simpMessagingTemplate.convertAndSend("/channel/theme", new ApiResponse(SUCCESS, coreThemeRepo.findAll()));
+        return new ApiResponse(SUCCESS, "Theme updated");
     }
 
     /**
-     * 
+     *
      * @param data
      * @return
      * @throws IOException
      */
-    @ApiMapping("/add-theme")
-    @Auth(role = "ROLE_ADMIN")
-    public ApiResponse addTheme(@Data String data) throws IOException {
-        String themeName = objectMapper.readTree(data).get("newTheme").get("name").asText();
-        CoreTheme newTheme = coreThemeRepo.create(themeName);
-        simpMessagingTemplate.convertAndSend("/channel/theme/", new ApiResponse(SUCCESS, newTheme));
-
-        return new ApiResponse(SUCCESS, "Theme added", newTheme);
+    @RequestMapping("/add-theme")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse addTheme(@RequestBody CoreTheme newTheme) throws IOException {
+        coreThemeRepo.create(newTheme.getName());
+        simpMessagingTemplate.convertAndSend("/channel/theme", new ApiResponse(SUCCESS, coreThemeRepo.findAll()));
+        return new ApiResponse(SUCCESS, "Theme added");
     }
 
     /**
-     * 
+     *
      * @param data
      * @return
      * @throws IOException
      */
-    @ApiMapping("/activate-theme")
-    @Auth(role = "ROLE_ADMIN")
-    public ApiResponse activateTheme(@Data String data) throws IOException {
-        Long themeId = objectMapper.readTree(data).get("themeId").asLong();
-        themeManagerService.setCurrentTheme(coreThemeRepo.getById(themeId));
+    @RequestMapping("/remove-theme")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse removeTheme(@RequestBody CoreTheme themeToRemove) throws IOException {
+        coreThemeRepo.delete(themeToRemove);
+        simpMessagingTemplate.convertAndSend("/channel/theme", new ApiResponse(SUCCESS, coreThemeRepo.findAll()));
+        return new ApiResponse(SUCCESS, "Theme removed");
+    }
+
+    /**
+     *
+     * @param data
+     * @return
+     * @throws IOException
+     */
+
+    @RequestMapping("/activate-theme")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse activateTheme(@RequestBody CoreTheme themeToActivate) throws IOException {
+        themeManagerService.setCurrentTheme(themeToActivate);
+        simpMessagingTemplate.convertAndSend("/channel/theme", new ApiResponse(SUCCESS, coreThemeRepo.findAll()));
         return new ApiResponse(SUCCESS, "Theme activated");
     }
 }
